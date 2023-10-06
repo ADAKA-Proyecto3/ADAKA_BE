@@ -23,12 +23,14 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {
+        log.debug("get all ser method  started");
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getUserById(@PathVariable int id) {
+        log.debug("getUserById method  started");
         User user = userService.getUserById(id);
         if (user != null) {
             return ResponseEntity.ok(user);
@@ -39,12 +41,14 @@ public class UserController {
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveUser(@RequestBody User user) {
+        log.debug("saveUser method  started");
         userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping(value = "/{id}/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody User user) {
+        log.debug("update User method  started");
         User existingUser = userService.getUserById(id);
         if (existingUser != null) {
             userService.updateUser(id, user);
@@ -56,6 +60,7 @@ public class UserController {
 
     @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
+        log.debug("deleteUser method  started");
         User existingUser = userService.getUserById(id);
         if (existingUser != null) {
             userService.deleteUser(id);
