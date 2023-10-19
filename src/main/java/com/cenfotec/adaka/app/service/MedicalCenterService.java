@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface MedicalCenterService {
 
-    List<MedicalCenter> getAllMedicalCenters();
+    List<MedicalCenter> getAllMedicalCenters(int id);
     MedicalCenter getMedicalCenterById(int id);
-    void saveMedicalCenter(MedicalCenter medicalCenter);
+    MedicalCenter saveMedicalCenter(MedicalCenter medicalCenter, int id);
     void updateMedicalCenter(int id, MedicalCenter medicalCenter);
     void updateMedicalStatus(int id, String status);
 }

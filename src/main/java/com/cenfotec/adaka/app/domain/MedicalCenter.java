@@ -1,9 +1,13 @@
 package com.cenfotec.adaka.app.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * MEDICAL CENTER CLASS
@@ -49,4 +53,22 @@ public class MedicalCenter {
      */
     @Enumerated(EnumType.STRING)
     Status status;
+
+    /**
+    * User reference
+    * */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_user")
+    @JsonBackReference
+    private User user;
+
+
+    /**
+     * List of rooms of medical center
+     * */
+    @OneToMany(mappedBy = "medicalCenter", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    List<Room> rooms = new ArrayList<>();
+
+
 }
