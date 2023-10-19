@@ -42,16 +42,10 @@ public class MedicalCenterController {
             // Manejo específico para la excepción InvalidMedicalCenterException
             log.error("Error al obtener los centros medicos del usuario: " + ex.getMessage(), ex);
 
-            if (ex.getMessage().contains("Validation errors:")) {
-                // Manejo específico para el caso de "No existe el ID"
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response<>("Error, " + ex.getMessage(), null));
-            } else {
                 // Manejo general para otras excepciones
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
             }
         }
-    }
-
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<?>> getMedicalCenterById(@PathVariable int id) {
