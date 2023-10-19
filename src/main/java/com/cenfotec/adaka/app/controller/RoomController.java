@@ -1,14 +1,14 @@
 package com.cenfotec.adaka.app.controller;
 
-
 import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Response;
+import com.cenfotec.adaka.app.domain.Room;
 import com.cenfotec.adaka.app.domain.User;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
-import com.cenfotec.adaka.app.exception.InvalidUserException;
+import com.cenfotec.adaka.app.exception.InvalidRoomException;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
+import com.cenfotec.adaka.app.service.RoomService;
 import com.cenfotec.adaka.app.service.UserService;
-import com.cenfotec.adaka.app.service.impl.MedicalCenterImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,42 +19,43 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/medical")// controller
+@RequestMapping("/room")// controller
 @RequiredArgsConstructor
-public class MedicalCenterController {
+public class RoomController {
     @Autowired
-    private MedicalCenterService medicalCenterService;
+    private RoomService roomService;
     private Logger log = LoggerFactory.getLogger(MedicalCenterController.class);
 
-    @GetMapping(value = "/all/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<?>> getAllMedicalCenters(@PathVariable int id) {
-        log.debug("get all MedicalCenter method  started");
-        try {
-            List<MedicalCenter> medicalCenters = medicalCenterService.getAllMedicalCenters(id);
-            return ResponseEntity.ok(new Response<>("Éxito", medicalCenters));
 
-        } catch (InvalidMedicalCenterException ex) {
+    @GetMapping(value = "/all/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<?>> getAllRooms(@PathVariable int id) {
+        log.debug("get all rooms method  started");
+        try {
+            List<Room> rooms = roomService.getAllRooms(id);
+            return ResponseEntity.ok(new Response<>("Éxito", rooms));
+
+        } catch (InvalidRoomException ex) {
             // Manejo específico para la excepción InvalidMedicalCenterException
-            log.error("Error al obtener los centros medicos del usuario: " + ex.getMessage(), ex);
+            log.error("Error al obtener las salas del centro medico: " + ex.getMessage(), ex);
+
             // Manejo general para otras excepciones
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
         }
     }
 
+
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<?>> getMedicalCenterById(@PathVariable int id) {
-        log.debug("getMedicalCenterById method started");
+    public ResponseEntity<Response<?>> getRoomById(@PathVariable int id) {
+        log.debug("getRoomById method started");
         try {
-            MedicalCenter medicalCenter = medicalCenterService.getMedicalCenterById(id);
-            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(medicalCenter)));
-        } catch (InvalidMedicalCenterException ex) {
+            Room room = roomService.getRoomById(id);
+            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(room)));
+        } catch (InvalidRoomException ex) {
             // Manejo específico para la excepción InvalidMedicalCenterException
-            log.error("Error al obtener el centro médico por ID: " + ex.getMessage(), ex);
+            log.error("Error al obtener la sala por ID: " + ex.getMessage(), ex);
 
             if (ex.getMessage().contains("The ID does not exist:")) {
                 // Manejo específico para el caso de "No existe el ID"
@@ -68,16 +69,16 @@ public class MedicalCenterController {
 
 
     @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<?>> saveMedicalCenter(@RequestBody MedicalCenter medicalCenter, @PathVariable int id) {
-        log.debug("saveMedicalCenter method  started");
+    public ResponseEntity<Response<?>> saveRoom(@RequestBody Room room, @PathVariable int id) {
+        log.debug("saveRoom method  started");
         try {
 
-            MedicalCenter newMedicalCenter = medicalCenterService.saveMedicalCenter(medicalCenter, id);
+            Room newRoom = roomService.saveRoom(room, id);
 
-            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(newMedicalCenter)));
-        } catch (InvalidMedicalCenterException ex) {
+            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(newRoom)));
+        } catch (InvalidRoomException ex) {
 
-            log.error("Error al crear el centro médico: " + ex.getMessage(), ex.getCause());
+            log.error("Error al crear la sala: " + ex.getMessage(), ex.getCause());
 
             if (ex.getMessage().contains("Some fields are empty: ")) {
 
@@ -91,28 +92,17 @@ public class MedicalCenterController {
     }
 
     @PutMapping(value = "changeMedical/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<?>> updateMedicalCenter(@PathVariable int id, @RequestBody MedicalCenter medicalCenter) {
+    public ResponseEntity<Response<?>> updateRoom(@PathVariable int id, @RequestBody Room room) {
         log.debug("update MedicalCenter method started");
 
         try {
-            medicalCenterService.updateMedicalCenter(id, medicalCenter);
-            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(medicalCenter)));
+            roomService.updateRoom(id, room);
+            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(room)));
         } catch (InvalidMedicalCenterException ex) {
             // Manejo de la excepción específica InvalidMedicalCenterException
-            log.error("Error al actualizar el centro médico: " + ex.getMessage(), ex.getCause());
+            log.error("Error al actualizar la sala: " + ex.getMessage(), ex.getCause());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
         }
     }
 
-    @PutMapping(value = "/changeMedicalStatus/{id}/{status}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updateMedicalCenterStatus(@PathVariable int id, @PathVariable String status) {
-        log.debug("update status MedicalCenter method  started");
-        MedicalCenter existingmedical = medicalCenterService.getMedicalCenterById(id);
-        if (existingmedical != null) {
-            medicalCenterService.updateMedicalStatus(id, status);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }
