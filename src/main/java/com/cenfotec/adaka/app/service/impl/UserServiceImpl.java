@@ -4,9 +4,11 @@ import com.cenfotec.adaka.app.domain.User;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository; // Create this repository interface
@@ -22,14 +24,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(User user) {
-        userRepository.save(user);
+    public User saveUser(User user) {
+
+        return userRepository.save(user);
     }
 
     @Override
-    public void updateUser(int id, User user) {
+    public User  updateUser(int id, User user) {
         user.setId(id);
-        userRepository.save(user);
+       return userRepository.save(user);
     }
 
     @Override

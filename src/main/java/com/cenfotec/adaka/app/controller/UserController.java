@@ -5,6 +5,7 @@ import com.cenfotec.adaka.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")// controller
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
-
+    @Autowired
     private UserService userService;
     private Logger log = LoggerFactory.getLogger(UserController.class);
-
 
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -46,7 +47,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping(value = "/{id}/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody User user) {
         log.debug("update User method  started");
         User existingUser = userService.getUserById(id);
@@ -60,7 +61,7 @@ public class UserController {
 
     @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        log.debug("deleteUser method  started");
+        log.debug("deleteloUser method  started");
         User existingUser = userService.getUserById(id);
         if (existingUser != null) {
             userService.deleteUser(id);
