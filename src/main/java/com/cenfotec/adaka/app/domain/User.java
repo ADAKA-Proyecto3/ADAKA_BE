@@ -1,10 +1,13 @@
 package com.cenfotec.adaka.app.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * USER CLASS
@@ -50,5 +53,13 @@ import javax.persistence.*;
      * String encrypted password
      */
     String password;
+
+    /**
+     * List of medical centers of user
+     * */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    List<MedicalCenter> medicalCenters = new ArrayList<>();
+
 
 }
