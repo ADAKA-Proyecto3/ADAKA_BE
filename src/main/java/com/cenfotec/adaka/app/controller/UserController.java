@@ -47,7 +47,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping(value = "/{id}/changePassword", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody User user) {
         log.debug("update User method  started");
         User existingUser = userService.getUserById(id);
@@ -61,7 +61,7 @@ public class UserController {
 
     @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        log.debug("deleteUser method  started");
+        log.debug("deleteloUser method  started");
         User existingUser = userService.getUserById(id);
         if (existingUser != null) {
             userService.deleteUser(id);

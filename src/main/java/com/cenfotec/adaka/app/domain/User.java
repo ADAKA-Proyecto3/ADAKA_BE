@@ -3,7 +3,7 @@ package com.cenfotec.adaka.app.domain;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
