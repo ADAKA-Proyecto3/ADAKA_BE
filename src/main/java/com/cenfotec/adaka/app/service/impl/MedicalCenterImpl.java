@@ -48,7 +48,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
     public MedicalCenter saveMedicalCenter(MedicalCenter medicalCenter, int id) {
         User user =  userService.getUserById(id);
         // Realizar validación detallada
-        List<String> validationErrors = validateMedicalCenter(medicalCenter);
+        List<String> validationErrors = validateMedicalCenter(medicalCenter, false);
 
         if (!validationErrors.isEmpty()) {
             throw new InvalidMedicalCenterException("Validation errors: " + String.join(", ", validationErrors));
@@ -65,42 +65,68 @@ public class MedicalCenterImpl implements MedicalCenterService {
         return newMedicalCenter;
     }
     @Override
-    public void updateMedicalCenter(int id, MedicalCenter medicalCenter) {
-        medicalCenter.setId(id);
-        medicalCenterRepository.save(medicalCenter);
+    public void updateMedicalCenter(int id, MedicalCenter newMedicalCenter) {
+
+        List<String> validationErrors = validateMedicalCenter(newMedicalCenter, true);
+
+        if (!validationErrors.isEmpty()) {
+            throw new InvalidMedicalCenterException("Validation errors: " + String.join(", ", validationErrors));
+        }
+        //Get the old medical center and update the relational values
+        MedicalCenter oldMedicalCenter = getMedicalCenterById(id);
+        newMedicalCenter.setStatus(oldMedicalCenter.getStatus());
+        newMedicalCenter.setUser(oldMedicalCenter.getUser());
+        newMedicalCenter.setId(id);
+
+        medicalCenterRepository.save(newMedicalCenter);
     }
 
     @Override
     public void updateMedicalStatus(int id, String status) {
+        try {
         MedicalCenter medicalCenter = getMedicalCenterById(id);
         Status newStatus = Status.valueOf(status);
         medicalCenter.setStatus(newStatus);
-        try {
-            medicalCenterRepository.save(medicalCenter);
+        medicalCenterRepository.save(medicalCenter);
         } catch (Exception ex) {
             throw new InvalidMedicalCenterException("Error al actualizar el estado del centro médico", ex);
         }
     }
 
+    @Override
+    public void deleteMedicalCenter(int id) {
+        try {
+            MedicalCenter medicalCenter = getMedicalCenterById(id);
+            if (medicalCenter.getRooms().isEmpty())
+                medicalCenterRepository.delete(medicalCenter);
+            else
+                throw new InvalidMedicalCenterException("Debe quitar las salas asociadas a este centro medico");
+        } catch (Exception ex) {
+            throw new InvalidMedicalCenterException("Error al eliminar el centro médico", ex);
+        }
+    }
+
 
     //PRIVATE METODS
-    private List<String> validateMedicalCenter(MedicalCenter medicalCenter) {
+    private List<String> validateMedicalCenter(MedicalCenter medicalCenter, boolean update) {
         List<String> validate = new ArrayList<>();
 
-        if (medicalCenter.getCoordinates().isEmpty()) {
+        if (medicalCenter.getLatitude().isEmpty() || medicalCenter.getLongitude().isEmpty()) {
             validate.add("Coordinades");
         }
-        if (medicalCenter.getName() == null || medicalCenter.getName().equals("")) {
+        if (medicalCenter.getName().isEmpty()) {
             validate.add("Name");
         }
-        if (medicalCenter.getDirection() == null || medicalCenter.getDirection().equals("")) {
+        if (medicalCenter.getDirection().isEmpty()) {
             validate.add("Direction");
         }
-        if (medicalCenter.getEmail() == null || medicalCenter.getEmail().equals("")) {
+        if (medicalCenter.getEmail().isEmpty()) {
             validate.add("Email");
         }
-        if (medicalCenter.getStatus() == null || medicalCenter.getStatus().equals("")) {
-            validate.add("Status");
+        if (!update){
+            if (medicalCenter.getStatus() == null || medicalCenter.getStatus().equals("")) {
+                validate.add("Status");
+            }
         }
 
         return validate;

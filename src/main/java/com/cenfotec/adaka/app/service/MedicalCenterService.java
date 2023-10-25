@@ -12,4 +12,5 @@ public interface MedicalCenterService {
     MedicalCenter saveMedicalCenter(MedicalCenter medicalCenter, int id);
     void updateMedicalCenter(int id, MedicalCenter medicalCenter);
     void updateMedicalStatus(int id, String status);
+    void deleteMedicalCenter(int id);
 }

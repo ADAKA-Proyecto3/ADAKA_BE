@@ -39,9 +39,14 @@ public class MedicalCenter {
     String direction;
 
     /**
-     *Medical center coordinates Lon - Lat
+     *Medical center latitude
      */
-    String coordinates;
+    String latitude;
+
+    /**
+     *Medical center longitude
+     */
+    String longitude;
 
     /**
      *Medical center email for notificatiions
