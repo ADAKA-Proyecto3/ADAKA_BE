@@ -107,7 +107,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
     }
 
 
-    //PRIVATE METODS
+    //PRIVATE METHODS
     private List<String> validateMedicalCenter(MedicalCenter medicalCenter, boolean update) {
         List<String> validate = new ArrayList<>();
 
