@@ -3,12 +3,8 @@ package com.cenfotec.adaka.app.controller;
 
 import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Response;
-import com.cenfotec.adaka.app.domain.User;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
-import com.cenfotec.adaka.app.exception.InvalidUserException;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
-import com.cenfotec.adaka.app.service.UserService;
-import com.cenfotec.adaka.app.service.impl.MedicalCenterImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/medical")// controller
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class MedicalCenterController {
     @Autowired
     private MedicalCenterService medicalCenterService;
@@ -96,7 +91,7 @@ public class MedicalCenterController {
 
         try {
             medicalCenterService.updateMedicalCenter(id, medicalCenter);
-            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(medicalCenter)));
+            return ResponseEntity.ok(new Response<>("Éxito", null));
         } catch (InvalidMedicalCenterException ex) {
             // Manejo de la excepción específica InvalidMedicalCenterException
             log.error("Error al actualizar el centro médico: " + ex.getMessage(), ex.getCause());
@@ -104,15 +99,29 @@ public class MedicalCenterController {
         }
     }
 
-    @PutMapping(value = "/changeMedicalStatus/{id}/{status}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updateMedicalCenterStatus(@PathVariable int id, @PathVariable String status) {
+    @PutMapping(value = "/changeMedicalStatus/{id}/{status}")
+    public ResponseEntity<Response<?>> updateMedicalCenterStatus(@PathVariable int id, @PathVariable String status) {
         log.debug("update status MedicalCenter method  started");
-        MedicalCenter existingmedical = medicalCenterService.getMedicalCenterById(id);
-        if (existingmedical != null) {
+        try {
             medicalCenterService.updateMedicalStatus(id, status);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(new Response<>("Éxito", null));
+        } catch (InvalidMedicalCenterException ex) {
+            // Manejo de la excepción específica InvalidMedicalCenterException
+            log.error("Error al actualizar el centro médico: " + ex.getMessage(), ex.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
+        }
+    }
+
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<Response<?>> deleteMedicalCenter(@PathVariable int id) {
+        log.debug("delete status MedicalCenter method  started");
+        try {
+            medicalCenterService.deleteMedicalCenter(id);
+            return ResponseEntity.ok(new Response<>("Éxito", null));
+        } catch (InvalidMedicalCenterException ex) {
+            // Manejo de la excepción específica InvalidMedicalCenterException
+            log.error("Error al eliminar el centro médico: " + ex.getMessage(), ex.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
         }
     }
 }

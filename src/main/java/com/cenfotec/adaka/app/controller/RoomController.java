@@ -91,16 +91,28 @@ public class RoomController {
         }
     }
 
-    @PutMapping(value = "changeMedical/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "changeRoom/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<?>> updateRoom(@PathVariable int id, @RequestBody Room room) {
         log.debug("update MedicalCenter method started");
 
         try {
             roomService.updateRoom(id, room);
-            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(room)));
-        } catch (InvalidMedicalCenterException ex) {
+            return ResponseEntity.ok(new Response<>("Éxito", null));
+        } catch (InvalidRoomException ex) {
             // Manejo de la excepción específica InvalidMedicalCenterException
             log.error("Error al actualizar la sala: " + ex.getMessage(), ex.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
+        }
+    }
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<Response<?>> deleteMedicalCenter(@PathVariable int id) {
+        log.debug("delete status MedicalCenter method  started");
+        try {
+            roomService.deleteRoom(id);
+            return ResponseEntity.ok(new Response<>("Éxito", null));
+        } catch (InvalidRoomException ex) {
+            // Manejo de la excepción específica InvalidMedicalCenterException
+            log.error("Error al eliminar la sala: " + ex.getMessage(), ex.getCause());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
         }
     }
