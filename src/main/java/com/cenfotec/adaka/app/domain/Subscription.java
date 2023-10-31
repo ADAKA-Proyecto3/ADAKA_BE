@@ -45,7 +45,7 @@ public class Subscription {
     /**
      * Text are for the addres (ToDo create json builder to populate)
      */
-    Blob shippingAddress;
+    String shippingAddress;
     /**
      * This  field to represent the one-to-many relationship between Subscription and User
      */
