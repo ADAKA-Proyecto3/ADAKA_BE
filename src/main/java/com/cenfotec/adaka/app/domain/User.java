@@ -59,6 +59,8 @@ import javax.persistence.*;
     /**
      * Subscription for the Admin user otherwise empty.
      */
-    String  subscription;
+    @ManyToOne
+    @JoinColumn(name = "sb_id")
+    Subscription subscription;
 
 }
