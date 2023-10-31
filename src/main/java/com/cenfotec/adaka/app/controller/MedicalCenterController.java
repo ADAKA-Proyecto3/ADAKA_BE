@@ -27,10 +27,10 @@ public class MedicalCenterController {
     private Logger log = LoggerFactory.getLogger(MedicalCenterController.class);
 
     @GetMapping(value = "/all/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<?>> getAllMedicalCenters(@PathVariable int id) {
+    public ResponseEntity<Response<?>> getAllMedicalCentersByUser(@PathVariable int id) {
         log.debug("get all MedicalCenter method  started");
         try {
-            List<MedicalCenter> medicalCenters = medicalCenterService.getAllMedicalCenters(id);
+            List<MedicalCenter> medicalCenters = medicalCenterService.getAllMedicalCentersByUserId(id);
             return ResponseEntity.ok(new Response<>("Éxito", medicalCenters));
 
         } catch (InvalidMedicalCenterException ex) {
@@ -90,8 +90,8 @@ public class MedicalCenterController {
         log.debug("update MedicalCenter method started");
 
         try {
-            medicalCenterService.updateMedicalCenter(id, medicalCenter);
-            return ResponseEntity.ok(new Response<>("Éxito", null));
+            MedicalCenter newMedicalCenter = medicalCenterService.updateMedicalCenter(id, medicalCenter);
+            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(newMedicalCenter)));
         } catch (InvalidMedicalCenterException ex) {
             // Manejo de la excepción específica InvalidMedicalCenterException
             log.error("Error al actualizar el centro médico: " + ex.getMessage(), ex.getCause());
@@ -103,8 +103,8 @@ public class MedicalCenterController {
     public ResponseEntity<Response<?>> updateMedicalCenterStatus(@PathVariable int id, @PathVariable String status) {
         log.debug("update status MedicalCenter method  started");
         try {
-            medicalCenterService.updateMedicalStatus(id, status);
-            return ResponseEntity.ok(new Response<>("Éxito", null));
+            MedicalCenter newMedicalCenter = medicalCenterService.updateMedicalStatus(id, status);
+            return ResponseEntity.ok(new Response<>("Éxito", Collections.singletonList(newMedicalCenter)));
         } catch (InvalidMedicalCenterException ex) {
             // Manejo de la excepción específica InvalidMedicalCenterException
             log.error("Error al actualizar el centro médico: " + ex.getMessage(), ex.getCause());
@@ -121,7 +121,14 @@ public class MedicalCenterController {
         } catch (InvalidMedicalCenterException ex) {
             // Manejo de la excepción específica InvalidMedicalCenterException
             log.error("Error al eliminar el centro médico: " + ex.getMessage(), ex.getCause());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
+            if (ex.getMessage().contains("You must remove the rooms associated with this medical center.")) {
+
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(new Response<>("Error, " + ex.getMessage(), null));
+
+            } else {
+                // Manejo general para otras excepciones
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
+            }
         }
     }
 }
