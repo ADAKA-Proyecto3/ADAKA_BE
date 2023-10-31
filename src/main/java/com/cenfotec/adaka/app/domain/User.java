@@ -1,10 +1,13 @@
 package com.cenfotec.adaka.app.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * USER CLASS
@@ -29,7 +32,7 @@ import javax.persistence.*;
      */
     String name;
     /**
-     *User's Role within the Helath Institution
+     *User's Role within the Health Institution
      */
     @Enumerated(EnumType.STRING)
     Role role;
@@ -50,5 +53,19 @@ import javax.persistence.*;
      * String encrypted password
      */
     String password;
+
+    /**
+     * List of medical centers per  user
+     * */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    List<MedicalCenter> medicalCenters = new ArrayList<>();
+    
+    /**
+     * Subscription for the Admin user otherwise empty.
+     */
+    @ManyToOne
+    @JoinColumn(name = "sb_id")
+    Subscription subscription;
 
 }
