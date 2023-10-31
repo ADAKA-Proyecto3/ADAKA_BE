@@ -46,15 +46,18 @@ import javax.persistence.*;
      * Email for notifications
      */
     String email;
-
-    /**
-     * Username
-     */
-    String usernamme;
     /**
      * String encrypted password
      */
     String password;
+
+    /**
+     * List of medical centers of user
+     * */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    List<MedicalCenter> medicalCenters = new ArrayList<>();
+
 
     /**
      * Subscription for the Admin user otherwise empty.
