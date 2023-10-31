@@ -47,8 +47,22 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("ADMIN", "USER")
                 .antMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
 
+                .antMatchers(HttpMethod.POST, "/api/device").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/devices").hasAnyRole("ADMIN","USER")
+                .antMatchers(HttpMethod.GET, "/api/devices/{id}").hasAnyRole("ADMIN","USER")
+                .antMatchers(HttpMethod.DELETE, "/api/devices/{id}").hasRole("ADMIN")
+
+                .antMatchers(HttpMethod.POST, "/api/medicalcenters").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/api/medicalcenters/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/medicalcenters").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/medicalcenters/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/medicalcenters/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/medicalcenters/roomm/{id}").hasAnyRole("ADMIN","USER")
+
                 .antMatchers(HttpMethod.POST, "/api/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/backoffice/service/").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/lecture/{id}").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
