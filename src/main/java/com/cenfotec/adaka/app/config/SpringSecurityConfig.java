@@ -48,7 +48,7 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
 
                 .antMatchers(HttpMethod.POST, "/api/device").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/api/devices").hasAnyRole("ADMIN","USER")
+                .antMatchers(HttpMethod.GET, "/api/devices").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/api/devices/{id}").hasAnyRole("ADMIN","USER")
                 .antMatchers(HttpMethod.DELETE, "/api/devices/{id}").hasRole("ADMIN")
 
@@ -57,7 +57,8 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/medicalcenters").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/api/medicalcenters/{id}").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/api/medicalcenters/{id}").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/api/medicalcenters/roomm/{id}").hasAnyRole("ADMIN","USER")
+                .antMatchers(HttpMethod.GET, "/api/medicalcenters/room/{id}").hasAnyRole("ADMIN","USER")
+                .antMatchers(HttpMethod.GET, "/api/medicalcenters/room/").hasAnyRole("ADMIN","USER")
 
                 .antMatchers(HttpMethod.POST, "/api/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/**").permitAll()
