@@ -29,7 +29,7 @@ import javax.persistence.*;
      */
     String name;
     /**
-     *User's Role within the Helath Institution
+     *User's Role within the Health Institution
      */
     @Enumerated(EnumType.STRING)
     Role role;
@@ -46,9 +46,19 @@ import javax.persistence.*;
      * Email for notifications
      */
     String email;
+
+    /**
+     * Username
+     */
+    String usernamme;
     /**
      * String encrypted password
      */
     String password;
+
+    /**
+     * Subscription for the Admin user otherwise empty.
+     */
+    String  subscription;
 
 }
