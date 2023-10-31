@@ -61,7 +61,7 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.GET, "/medicalcenters/room/").hasAnyRole("ADMIN","USER")
 
 
-                .antMatchers(HttpMethod.POST, "/backoffice/service/").permitAll()
+                .antMatchers(HttpMethod.POST, "/subscription/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/lecture/{id}").permitAll()
 
                 .anyRequest().authenticated()

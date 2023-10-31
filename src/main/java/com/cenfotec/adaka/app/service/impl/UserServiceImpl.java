@@ -8,6 +8,7 @@ import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository; // Create this repository interface
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> getAllUsers() {
@@ -50,6 +53,7 @@ public class UserServiceImpl implements UserService {
     public User saveAdmin(User user, Subscription subscription) {
         user.setRole(Role.ADMIN);
         user.setStatus(Status.ACTIVE);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         Subscription sb = subscriptionRepository.save(subscription);
         user.setSubscription(sb);
         return userRepository.save(user);
