@@ -23,12 +23,11 @@ public class MedicalCenterImpl implements MedicalCenterService {
     @Autowired
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
     @Autowired
-    private UserService userService; // Create this repository interface
+    private UserRepository userRepository; // Create this repository interface
 
     @Override
-    public List<MedicalCenter> getAllMedicalCenters(int id) {
-        User user = userService.getUserById(id);
-        List<MedicalCenter> medicalCenters = user.getMedicalCenters();
+    public List<MedicalCenter> getAllMedicalCentersByUserId(int id) {
+        List<MedicalCenter> medicalCenters = medicalCenterRepository.findByUserId(id);
 
         return medicalCenters;
     }
@@ -36,17 +35,14 @@ public class MedicalCenterImpl implements MedicalCenterService {
     @Override
     public MedicalCenter getMedicalCenterById(int id) {
 
-        Optional<MedicalCenter> optionalMedicalCenter = medicalCenterRepository.findById(id);
-        if (optionalMedicalCenter.isPresent()) {
-            return optionalMedicalCenter.get();
-        } else {
-            throw new InvalidMedicalCenterException("The ID does not exist: " + id);
-        }
+        MedicalCenter medicalCenter = medicalCenterRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("The ID does not exist: " + id));
+        return medicalCenter;
     }
 
     @Override
     public MedicalCenter saveMedicalCenter(MedicalCenter medicalCenter, int id) {
-        User user =  userService.getUserById(id);
+        User user = userRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("Not user with ID"));
+
         // Realizar validación detallada
         List<String> validationErrors = validateMedicalCenter(medicalCenter, false);
 
@@ -65,7 +61,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
         return newMedicalCenter;
     }
     @Override
-    public void updateMedicalCenter(int id, MedicalCenter newMedicalCenter) {
+    public MedicalCenter updateMedicalCenter(int id, MedicalCenter newMedicalCenter) {
 
         List<String> validationErrors = validateMedicalCenter(newMedicalCenter, true);
 
@@ -78,16 +74,16 @@ public class MedicalCenterImpl implements MedicalCenterService {
         newMedicalCenter.setUser(oldMedicalCenter.getUser());
         newMedicalCenter.setId(id);
 
-        medicalCenterRepository.save(newMedicalCenter);
+        return medicalCenterRepository.save(newMedicalCenter);
     }
 
     @Override
-    public void updateMedicalStatus(int id, String status) {
+    public MedicalCenter updateMedicalStatus(int id, String status) {
         try {
-        MedicalCenter medicalCenter = getMedicalCenterById(id);
-        Status newStatus = Status.valueOf(status);
-        medicalCenter.setStatus(newStatus);
-        medicalCenterRepository.save(medicalCenter);
+            MedicalCenter medicalCenter = getMedicalCenterById(id);
+            Status newStatus = Status.valueOf(status);
+            medicalCenter.setStatus(newStatus);
+            return medicalCenterRepository.save(medicalCenter);
         } catch (Exception ex) {
             throw new InvalidMedicalCenterException("Error al actualizar el estado del centro médico", ex);
         }
@@ -96,13 +92,14 @@ public class MedicalCenterImpl implements MedicalCenterService {
     @Override
     public void deleteMedicalCenter(int id) {
         try {
+
             MedicalCenter medicalCenter = getMedicalCenterById(id);
-            if (medicalCenter.getRooms().isEmpty())
-                medicalCenterRepository.delete(medicalCenter);
+            if ((medicalCenter.getRooms() == null) || medicalCenter.getRooms().isEmpty())
+                medicalCenterRepository.deleteById(id);
             else
-                throw new InvalidMedicalCenterException("Debe quitar las salas asociadas a este centro medico");
+                throw new InvalidMedicalCenterException("You must remove the rooms associated with this medical center.");
         } catch (Exception ex) {
-            throw new InvalidMedicalCenterException("Error al eliminar el centro médico", ex);
+            throw new InvalidMedicalCenterException("Deleting medical center", ex);
         }
     }
 

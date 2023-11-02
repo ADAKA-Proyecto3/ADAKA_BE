@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface MedicalCenterService {
 
-    List<MedicalCenter> getAllMedicalCenters(int id);
+    List<MedicalCenter> getAllMedicalCentersByUserId(int id);
     MedicalCenter getMedicalCenterById(int id);
     MedicalCenter saveMedicalCenter(MedicalCenter medicalCenter, int id);
-    void updateMedicalCenter(int id, MedicalCenter medicalCenter);
-    void updateMedicalStatus(int id, String status);
+    MedicalCenter updateMedicalCenter(int id, MedicalCenter medicalCenter);
+    MedicalCenter updateMedicalStatus(int id, String status);
     void deleteMedicalCenter(int id);
 }
