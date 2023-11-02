@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")// controller
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -59,13 +59,13 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteUser(@PathVariable int id) {
         log.debug("deleteloUser method  started");
         User existingUser = userService.getUserById(id);
         if (existingUser != null) {
-            userService.deleteUser(id);
-            return ResponseEntity.noContent().build();
+            String response = userService.deleteUser(id);
+            return ResponseEntity.ok().body(response);
         } else {
             return ResponseEntity.notFound().build();
         }

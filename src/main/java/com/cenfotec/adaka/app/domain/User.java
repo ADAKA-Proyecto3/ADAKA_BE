@@ -36,7 +36,7 @@ import java.util.List;
      */
     String name;
     /**
-     *User's Role within the Helath Institution
+     *User's Role within the Health Institution
      */
     @Enumerated(EnumType.STRING)
     Role role;
@@ -59,11 +59,17 @@ import java.util.List;
     String password;
 
     /**
-     * List of medical centers of user
+     * List of medical centers per  user
      * */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     List<MedicalCenter> medicalCenters = new ArrayList<>();
-
+    
+    /**
+     * Subscription for the Admin user otherwise empty.
+     */
+    @ManyToOne
+    @JoinColumn(name = "sb_id")
+    Subscription subscription;
 
 }
