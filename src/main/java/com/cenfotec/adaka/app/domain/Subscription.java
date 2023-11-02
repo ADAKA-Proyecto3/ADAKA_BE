@@ -1,5 +1,6 @@
 package com.cenfotec.adaka.app.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -50,6 +51,7 @@ public class Subscription {
      * This  field to represent the one-to-many relationship between Subscription and User
      */
     @OneToMany(mappedBy = "subscription")
+    @JsonBackReference
     List<User> users;
 
 }

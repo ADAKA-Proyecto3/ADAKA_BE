@@ -47,8 +47,8 @@ public class BackOfficeController {
     @PostMapping(value = "/save/admin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> saveNewAdminUser(@RequestBody AdminDto Admin) {
         log.debug("saveNewAdminser method  started");
-        userService.saveAdmin(UserMapperUtil.getAdminUserFromDto(Admin),UserMapperUtil.getSubscritionFromDto(Admin) );
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        User savedUser = userService.saveAdmin(UserMapperUtil.getAdminUserFromDto(Admin),UserMapperUtil.getSubscritionFromDto(Admin) );
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
 
