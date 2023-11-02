@@ -46,8 +46,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(int id) {
+    public String  deleteUser(int id) {
+        String message ;
         userRepository.deleteById(id);
+        if(userRepository.findById(id)==null){
+            message= "The user identified by the ID"+id+"has been succefully deleted";;
+        }else message= "error while deleting the user";
+        return message;
     }
 
     public User saveAdmin(User user, Subscription subscription) {
