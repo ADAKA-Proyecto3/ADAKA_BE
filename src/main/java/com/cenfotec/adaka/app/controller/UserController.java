@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")// controller
@@ -39,12 +40,22 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping(value = "email/{email}",  produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+        log.debug("getUserByEmail method  started");
+        User user = userService.getUserByEmail(email);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> saveUser(@RequestBody User user) {
+    public ResponseEntity<User> saveUser(@RequestBody User user) {
         log.debug("saveUser method  started");
-        userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+         User savedUser =  userService.saveUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @PutMapping(value = "/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,15 +70,16 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> deleteUser(@PathVariable int id) {
-        log.debug("deleteloUser method  started");
-        User existingUser = userService.getUserById(id);
-        if (existingUser != null) {
-            String response = userService.deleteUser(id);
-            return ResponseEntity.ok().body(response);
-        } else {
-            return ResponseEntity.notFound().build();
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
+
+        Optional<User> o = Optional.ofNullable(userService.getUserById(id));
+
+        if (o.isPresent()) {
+            userService.deleteUser(id);
+            return ResponseEntity.noContent().build(); // 204
         }
+        return ResponseEntity.notFound().build();
     }
 }
