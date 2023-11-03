@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,13 +30,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(int id) {
-
         return userRepository.findById(id).orElse(null);
     }
 
     @Override
-    public User saveUser(User user) {
+    public User getUserByEmail(String email) {
+        Optional<User> userOptional = this.userRepository.getUserByEmail(email);
+        return userOptional.orElse(null);
+    }
 
+
+    @Override
+    public User saveUser(User user) {
         return userRepository.save(user);
     }
 
@@ -46,8 +52,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(int id) {
-        userRepository.deleteById(id);
+    public String  deleteUser(int id) {
+        String message ;
+
+        Optional<User> o = userRepository.findById(id);
+
+        if(o.isEmpty()){
+            message= "The user identified by the ID"+id+"has been succefully deleted";;
+        }else{
+            message= "error while deleting the user";
+        }
+
+        return message;
+
+        //if(userRepository.findById(id)==null){
+          //  message= "The user identified by the ID"+id+"has been succefully deleted";;
+        //}else message= "error while deleting the user";
+        //return message;
     }
 
     public User saveAdmin(User user, Subscription subscription) {
