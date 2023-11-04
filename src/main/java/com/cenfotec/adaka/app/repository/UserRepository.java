@@ -15,5 +15,5 @@ public interface UserRepository extends CrudRepository<User,Integer> {
 
     List<User> findUsersByManager(int managerId);
     List<User> findUsersByAssignedMedicalCenter(int medicalCenterId);
-    
+
 }

@@ -6,7 +6,7 @@ import com.cenfotec.adaka.app.domain.User;
 import java.util.List;
 
 public interface  UserService {
-    List<User> getAllUsers();
+    List<User> getAllUsers(int manager);
     User getUserById(int id);
     User getUserByEmail(String email);
     User saveUser(User user, int parentId, int medicalCenterId);

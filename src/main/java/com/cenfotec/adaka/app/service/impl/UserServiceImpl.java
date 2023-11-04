@@ -27,8 +27,8 @@ public class UserServiceImpl implements UserService {
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getAllUsers(int manager) {
+        return userRepository.findUsersByManager(manager);
     }
 
     @Override
