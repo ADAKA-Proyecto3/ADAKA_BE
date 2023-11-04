@@ -75,13 +75,19 @@ import java.util.List;
     /*
     * Recursive relationship -  user relationship
     * */
+//
+//    @ManyToOne
+//    @JoinColumn(name = "parent_id")
+//    User parent;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    User parent;
+//    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+//    List<User> subUsers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    List<User> subUsers = new ArrayList<>();
-
+    /**
+     * info related to sub users like medical center and manager
+     * */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    SubUserData subUserData;
 
 }
