@@ -86,8 +86,7 @@ import java.util.List;
     /**
      * info related to sub users like medical center and manager
      * */
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToOne
     SubUserData subUserData;
 
 }

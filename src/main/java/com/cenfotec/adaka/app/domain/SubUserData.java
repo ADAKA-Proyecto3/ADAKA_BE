@@ -1,6 +1,6 @@
 package com.cenfotec.adaka.app.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,8 +20,7 @@ public class SubUserData {
     /**
      * User reference
      * */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subUser")
-    @JsonBackReference
+    @OneToOne(mappedBy = " subUserData")
+    @JsonManagedReference
    User subUser;
 }
