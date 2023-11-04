@@ -2,17 +2,21 @@ package com.cenfotec.adaka.app.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import javax.persistence.*;
 
 
 @Data
 @Entity
 public class SubUserData {
-   MedicalCenter  medicalCenter;
-   User manager;
+    /**
+     * Unique identifier
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
+     MedicalCenter  medicalCenter;
+     User manager;
     /**
      * User reference
      * */
