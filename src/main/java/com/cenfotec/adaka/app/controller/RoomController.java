@@ -91,7 +91,7 @@ public class RoomController {
         }
     }
 
-    @PutMapping(value = "changeRoom/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/changeRoom/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<?>> updateRoom(@PathVariable int id, @RequestBody Room room) {
         log.debug("update MedicalCenter method started");
 
