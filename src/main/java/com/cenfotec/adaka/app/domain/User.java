@@ -64,12 +64,19 @@ import java.util.List;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     List<MedicalCenter> medicalCenters = new ArrayList<>();
-    
+
     /**
      * Subscription for the Admin user otherwise empty.
      */
     @ManyToOne
     @JoinColumn(name = "sb_id")
     Subscription subscription;
-
+    /**
+     * The subuser's manager ID (aka admin)
+     */
+   int manager;
+    /**
+     * The subuser's medical's  ID (aka medical center)
+     */
+   int assignedMedicalCenter;
 }

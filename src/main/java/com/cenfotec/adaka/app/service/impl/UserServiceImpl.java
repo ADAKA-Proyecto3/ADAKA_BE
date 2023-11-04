@@ -1,9 +1,7 @@
 package com.cenfotec.adaka.app.service.impl;
 
-import com.cenfotec.adaka.app.domain.Role;
-import com.cenfotec.adaka.app.domain.Status;
-import com.cenfotec.adaka.app.domain.Subscription;
-import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.domain.*;
+import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.UserService;
@@ -23,9 +21,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
+
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getAllUsers(int manager) {
+        return userRepository.findUsersByManager(manager);
     }
 
     @Override
@@ -41,8 +42,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public User saveUser(User user, int parentId, int medicalCenterId) {
+        User admin = userRepository.findById(parentId).get();
+        MedicalCenter medicalCenter =  medicalCenterRepository.findById(medicalCenterId).get();
+        if(parentId>=1 && medicalCenterId>=1 & admin!=null & medicalCenter!=null){
+            user.setManager(parentId);
+            user.setAssignedMedicalCenter(medicalCenterId);
+            return userRepository.save(user);
+
+        }else  return null;
+
     }
 
     @Override
