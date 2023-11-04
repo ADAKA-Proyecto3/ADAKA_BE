@@ -2,6 +2,7 @@ package com.cenfotec.adaka.app.service.impl;
 
 import com.cenfotec.adaka.app.domain.*;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
+import com.cenfotec.adaka.app.repository.SubUserDataRepository;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
@@ -27,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private MedicalCenterImpl medicalCenterService;
     @Autowired
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
+    @Autowired
+    private SubUserDataRepository subUserDataRepository; // Create this repository interface
 
     @Override
     public List<User> getAllUsers() {
@@ -52,9 +55,10 @@ public class UserServiceImpl implements UserService {
         if(parentId>=1 && medicalCenterId>=1 & admin!=null & medicalCenter!=null){
             User pyvot = user;
             SubUserData subUserData = new SubUserData();
-            subUserData.setManager(admin);
-            subUserData.setMedicalCenter(medicalCenter);
+            subUserData.setManager(admin.getId());
+            subUserData.setMedicalCenter(medicalCenter.getId());
             subUserData.setSubUser(pyvot);
+            subUserDataRepository.save(subUserData);
             user.setSubUserData(subUserData);
             return userRepository.save(user);
 
