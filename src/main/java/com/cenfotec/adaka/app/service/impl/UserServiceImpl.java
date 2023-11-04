@@ -1,6 +1,7 @@
 package com.cenfotec.adaka.app.service.impl;
 
 import com.cenfotec.adaka.app.domain.*;
+import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
@@ -24,6 +25,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private MedicalCenterImpl medicalCenterService;
+    @Autowired
+    private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
 
     @Override
     public List<User> getAllUsers() {
@@ -44,16 +47,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(User user, int parentId, int medicalCenterId) {
+        User admin = userRepository.findById(parentId).get();
+        MedicalCenter medicalCenter =  medicalCenterRepository.findById(medicalCenterId).get();
+        if(parentId>=1 && medicalCenterId>=1 & admin!=null & medicalCenter!=null){
+            User pyvot = user;
+            SubUserData subUserData = new SubUserData();
+            subUserData.setManager(admin);
+            subUserData.setMedicalCenter(medicalCenter);
+            subUserData.setSubUser(pyvot);
+            user.setSubUserData(subUserData);
+            return userRepository.save(user);
 
-        Optional<User> oParent = userRepository.findById(parentId);
-        Optional<MedicalCenter> oMedical = Optional.ofNullable(medicalCenterService.getMedicalCenterById(medicalCenterId));
+        }else  return null;
 
-       // ArrayList<Optional<MedicalCenter>>
-        oMedical.ifPresent(medicalCenter -> user.getMedicalCenters().add(medicalCenter)); // Add the medical center to the user's list
-
-        oParent.ifPresent(user::setParent);
-
-        return userRepository.save(user);
     }
 
     @Override
