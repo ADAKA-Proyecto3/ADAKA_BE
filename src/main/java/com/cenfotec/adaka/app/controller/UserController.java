@@ -51,10 +51,10 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> saveUser(@RequestBody User user) {
+    @PostMapping(value = "/{parentId}/{medicalCenterId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> saveUser(@RequestBody User user, @PathVariable int parentId, @PathVariable int medicalCenterId  ) {
         log.debug("saveUser method  started");
-         User savedUser =  userService.saveUser(user);
+         User savedUser =  userService.saveUser(user, parentId, medicalCenterId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 

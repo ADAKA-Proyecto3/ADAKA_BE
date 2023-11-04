@@ -72,4 +72,16 @@ import java.util.List;
     @JoinColumn(name = "sb_id")
     Subscription subscription;
 
+    /*
+    * Recursive relationship -  user relationship
+    * */
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    User parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    List<User> subUsers = new ArrayList<>();
+
+
 }

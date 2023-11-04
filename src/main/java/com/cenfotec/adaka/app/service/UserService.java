@@ -9,7 +9,7 @@ public interface  UserService {
     List<User> getAllUsers();
     User getUserById(int id);
     User getUserByEmail(String email);
-    User saveUser(User user);
+    User saveUser(User user, int parentId, int medicalCenterId);
     User updateUser(int id, User user);
     String  deleteUser(int id);
 }

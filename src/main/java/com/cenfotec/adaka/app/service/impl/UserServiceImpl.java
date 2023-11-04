@@ -1,16 +1,15 @@
 package com.cenfotec.adaka.app.service.impl;
 
-import com.cenfotec.adaka.app.domain.Role;
-import com.cenfotec.adaka.app.domain.Status;
-import com.cenfotec.adaka.app.domain.Subscription;
-import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.domain.*;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
+import com.cenfotec.adaka.app.service.MedicalCenterService;
 import com.cenfotec.adaka.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +21,9 @@ public class UserServiceImpl implements UserService {
     private SubscriptionRepository subscriptionRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private MedicalCenterImpl medicalCenterService;
 
     @Override
     public List<User> getAllUsers() {
@@ -41,7 +43,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User saveUser(User user) {
+    public User saveUser(User user, int parentId, int medicalCenterId) {
+
+        Optional<User> oParent = userRepository.findById(parentId);
+        Optional<MedicalCenter> oMedical = Optional.ofNullable(medicalCenterService.getMedicalCenterById(medicalCenterId));
+
+       // ArrayList<Optional<MedicalCenter>>
+        oMedical.ifPresent(medicalCenter -> user.getMedicalCenters().add(medicalCenter)); // Add the medical center to the user's list
+
+        oParent.ifPresent(user::setParent);
+
         return userRepository.save(user);
     }
 
