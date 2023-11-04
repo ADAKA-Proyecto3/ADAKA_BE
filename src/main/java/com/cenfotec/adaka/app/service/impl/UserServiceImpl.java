@@ -2,16 +2,13 @@ package com.cenfotec.adaka.app.service.impl;
 
 import com.cenfotec.adaka.app.domain.*;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
-import com.cenfotec.adaka.app.repository.SubUserDataRepository;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
-import com.cenfotec.adaka.app.service.MedicalCenterService;
 import com.cenfotec.adaka.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,8 +25,6 @@ public class UserServiceImpl implements UserService {
     private MedicalCenterImpl medicalCenterService;
     @Autowired
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
-    @Autowired
-    private SubUserDataRepository subUserDataRepository; // Create this repository interface
 
     @Override
     public List<User> getAllUsers() {
@@ -53,13 +48,8 @@ public class UserServiceImpl implements UserService {
         User admin = userRepository.findById(parentId).get();
         MedicalCenter medicalCenter =  medicalCenterRepository.findById(medicalCenterId).get();
         if(parentId>=1 && medicalCenterId>=1 & admin!=null & medicalCenter!=null){
-            User pyvot = user;
-            SubUserData subUserData = new SubUserData();
-            subUserData.setManager(admin.getId());
-            subUserData.setMedicalCenter(medicalCenter.getId());
-            subUserData.setSubUser(pyvot);
-            subUserDataRepository.save(subUserData);
-            user.setSubUserData(subUserData);
+            user.setManager(parentId);
+            user.setAssignedMedicalCenter(medicalCenterId);
             return userRepository.save(user);
 
         }else  return null;
