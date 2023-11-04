@@ -22,8 +22,6 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private MedicalCenterImpl medicalCenterService;
-    @Autowired
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
 
     @Override
