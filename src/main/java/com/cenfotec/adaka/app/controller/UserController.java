@@ -23,10 +23,10 @@ public class UserController {
     private UserService userService;
     private Logger log = LoggerFactory.getLogger(UserController.class);
 
-    @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers() {
+    @GetMapping("all/{managerId}")
+    public ResponseEntity<List<User>> getAllUsers(@PathVariable int  managerId) {
         log.debug("get all ser method  started");
-        List<User> users = userService.getAllUsers();
+        List<User> users = userService.getAllUsers(managerId);
         return ResponseEntity.ok(users);
     }
 
