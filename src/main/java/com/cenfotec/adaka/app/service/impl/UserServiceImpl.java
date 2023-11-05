@@ -66,8 +66,11 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> o = userRepository.findById(id);
 
-        if(o.isEmpty()){
+        if(o.isPresent()){
+            userRepository.deleteById(o.get().getId());
             message= "The user identified by the ID"+id+"has been succefully deleted";;
+
+
         }else{
             message= "error while deleting the user";
         }
