@@ -44,7 +44,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
         User user = userRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("Usuario no encontrado"));
 
         if (medicalCenterRepository.existsMedicalCenterByNameAndUserId(medicalCenter.getName(), id)) {
-            throw new InvalidMedicalCenterException("Validación: ya existe un centro médico reegistrado con ese nombre");
+            throw new InvalidMedicalCenterException("Validación: ya existe un centro médico registrado con ese nombre");
         }
         // Realizar validación detallada
         List<String> validationErrors = validateMedicalCenter(medicalCenter, false);
