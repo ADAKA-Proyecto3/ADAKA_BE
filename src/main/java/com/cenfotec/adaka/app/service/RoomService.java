@@ -9,7 +9,7 @@ public interface RoomService {
     List<Room> getAllRooms(int id);
     Room getRoomById(int id);
     Room saveRoom(Room room, int id);
-    void updateRoom(int id, Room room);
+    Room updateRoom(int roomId, int medicalCenterId , Room room);
     void deleteRoom(int id);
 
 }

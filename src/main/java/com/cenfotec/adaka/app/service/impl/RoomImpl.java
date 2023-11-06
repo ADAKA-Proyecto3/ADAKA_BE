@@ -66,22 +66,25 @@ public class RoomImpl implements RoomService {
     }
 
     @Override
-    public void updateRoom(int id, Room newRoom) {
-        List<String> validationErrors = validateRooms(newRoom);
+    public Room updateRoom(int roomId,int medicalCenterId ,Room newRoom) {
 
-        if (!validationErrors.isEmpty()) {
-            throw new InvalidRoomException("Validation errors: " + String.join(", ", validationErrors));
-        }
-        //Get the old room and update the relational values
-        Room oldRoom = getRoomById(id);
-        oldRoom.setName(newRoom.getName());
-        oldRoom.setHeight(newRoom.getHeight());
-        oldRoom.setLength(newRoom.getLength());
-        oldRoom.setWidth(newRoom.getWidth());
-        long newVolume = newRoom.getLength() * newRoom.getWidth() * newRoom.getHeight();
-        oldRoom.setVolume(newVolume);
+         Optional <MedicalCenter>  medicalCenter = Optional.ofNullable(medicalCenterService.getMedicalCenterById(medicalCenterId));
+         Optional <Room> room = Optional.ofNullable(getRoomById(roomId));
 
-        roomRepository.save(oldRoom);
+         if(medicalCenter.isPresent() && room.isPresent()){
+             Room db_room = room.get();
+             db_room.setName(newRoom.getName());
+             db_room.setHeight(newRoom.getHeight());
+             db_room.setWidth(newRoom.getWidth());
+             db_room.setLength(newRoom.getLength());
+             long volume = newRoom.getLength() * newRoom.getWidth() * newRoom.getHeight();
+             db_room.setVolume(volume);
+             db_room.setMedicalCenter(medicalCenter.get());
+
+             return roomRepository.save(db_room);
+         }else{
+             throw new InvalidRoomException("Validation errors: Error Updating Rooms" );
+         }
     }
 
     @Override
@@ -95,7 +98,6 @@ public class RoomImpl implements RoomService {
         }
     }
 
-    //PRIVATE
     private List<String> validateRooms(Room room) {
         List<String> validate = new ArrayList<>();
         Long length = room.getLength();
@@ -125,7 +127,6 @@ public class RoomImpl implements RoomService {
 
     private boolean validateMedicalCenterRoom(MedicalCenter medicalCenter) {
         List<Room> rooms = medicalCenter.getRooms();
-        //AQUI SE LE LA VARA
         return true;
     }
 }
