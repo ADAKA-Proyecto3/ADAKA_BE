@@ -35,25 +35,25 @@ public class MedicalCenterImpl implements MedicalCenterService {
     @Override
     public MedicalCenter getMedicalCenterById(int id) {
 
-        MedicalCenter medicalCenter = medicalCenterRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("No existe el centro médico: " + id));
+        MedicalCenter medicalCenter = medicalCenterRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("no existe el centro médico: " + id));
         return medicalCenter;
     }
 
     @Override
     public MedicalCenter saveMedicalCenter(MedicalCenter medicalCenter, int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("Usuario no encontrado"));
+        User user = userRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("usuario no encontrado"));
 
         if (medicalCenterRepository.existsMedicalCenterByNameAndUserId(medicalCenter.getName(), id)) {
-            throw new InvalidMedicalCenterException("Validación: ya existe un centro médico registrado con ese nombre");
+            throw new InvalidMedicalCenterException("validación: ya existe un centro médico registrado con ese nombre");
         }
         // Realizar validación detallada
         List<String> validationErrors = validateMedicalCenter(medicalCenter, false);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidMedicalCenterException("Validación, campos vacios: " + String.join(", ", validationErrors));
+            throw new InvalidMedicalCenterException("validación, campos vacios: " + String.join(", ", validationErrors));
         }
         if (!validateUserMedicalCenter(user)) {
-            throw new InvalidMedicalCenterException("Máximo número de centros médicos registrados para el plan seleccionado");
+            throw new InvalidMedicalCenterException("máximo número de centros médicos registrados para el plan seleccionado");
         }
         // Guardar el centro médico en la base de datos
         MedicalCenter newMedicalCenter = medicalCenterRepository.save(medicalCenter);
@@ -70,7 +70,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
         List<String> validationErrors = validateMedicalCenter(newMedicalCenter, true);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidMedicalCenterException("Validación, campos vacios: " + String.join(", ", validationErrors));
+            throw new InvalidMedicalCenterException("validación, campos vacios: " + String.join(", ", validationErrors));
         }
         //Get the old medical center and update the relational values
         MedicalCenter oldMedicalCenter = getMedicalCenterById(id);
@@ -89,7 +89,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
             medicalCenter.setStatus(newStatus);
             return medicalCenterRepository.save(medicalCenter);
         } catch (Exception ex) {
-            throw new InvalidMedicalCenterException("Error al actualizar el estado del centro médico", ex);
+            throw new InvalidMedicalCenterException("actualizar el estado del centro médico", ex);
         }
     }
 
@@ -100,7 +100,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
         boolean hasRooms = medicalCenterRepository.existsMedicalCenterByIdAndRoomsIsNotEmpty(id);
 
         if (hasRooms) {
-            throw new InvalidMedicalCenterException("Tiene salas asociadas al centro médico");
+            throw new InvalidMedicalCenterException("el centro médico tiene salas asociadas");
         } else {
             medicalCenterRepository.deleteById(id);
         }
