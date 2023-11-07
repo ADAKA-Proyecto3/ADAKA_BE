@@ -51,7 +51,7 @@ public class MedicalCenterController {
             // Manejo específico para la excepción InvalidMedicalCenterException
             log.error("Error al obtener el centro médico por ID: " + ex.getMessage(), ex);
 
-            if (ex.getMessage().contains("The ID does not exist:")) {
+            if (ex.getMessage().contains("Validación")) {
                 // Manejo específico para el caso de "No existe el ID"
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response<>("Error, " + ex.getMessage(), null));
             } else {
@@ -74,7 +74,7 @@ public class MedicalCenterController {
 
             log.error("Error al crear el centro médico: " + ex.getMessage(), ex.getCause());
 
-            if (ex.getMessage().contains("Some fields are empty: ")) {
+            if (ex.getMessage().contains("Validación")) {
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response<>("Error, " + ex.getMessage(), null));
 
