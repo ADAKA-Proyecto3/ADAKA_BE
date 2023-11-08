@@ -1,15 +1,9 @@
 package com.cenfotec.adaka.app.controller;
 
-import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Response;
 import com.cenfotec.adaka.app.domain.Room;
-import com.cenfotec.adaka.app.domain.User;
-import com.cenfotec.adaka.app.dto.RoomDTO;
-import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.exception.InvalidRoomException;
-import com.cenfotec.adaka.app.service.MedicalCenterService;
 import com.cenfotec.adaka.app.service.RoomService;
-import com.cenfotec.adaka.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +45,7 @@ public class RoomController {
     public ResponseEntity<Response<?>> getAllRoomsByUserId(@PathVariable int id) {
         log.debug("get all rooms by user id method  started");
         try {
-            List<RoomDTO> rooms = roomService.getAllRoomsByUserId(id);
+            List<Room> rooms = roomService.getAllRoomsByUserId(id);
             return ResponseEntity.ok(new Response<>("Éxito", rooms));
 
         } catch (InvalidRoomException ex) {

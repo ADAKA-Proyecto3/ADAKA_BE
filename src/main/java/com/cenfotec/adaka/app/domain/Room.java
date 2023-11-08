@@ -52,4 +52,6 @@ public class Room {
     @JsonBackReference
     private MedicalCenter medicalCenter;
 
+    @Transient
+    private int medicalCenterId;
 }
