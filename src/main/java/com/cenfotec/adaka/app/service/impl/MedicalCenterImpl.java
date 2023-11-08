@@ -35,22 +35,25 @@ public class MedicalCenterImpl implements MedicalCenterService {
     @Override
     public MedicalCenter getMedicalCenterById(int id) {
 
-        MedicalCenter medicalCenter = medicalCenterRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("The ID does not exist: " + id));
+        MedicalCenter medicalCenter = medicalCenterRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("No existe el centro médico: " + id));
         return medicalCenter;
     }
 
     @Override
     public MedicalCenter saveMedicalCenter(MedicalCenter medicalCenter, int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("Not user with ID"));
+        User user = userRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("Usuario no encontrado"));
 
+        if (medicalCenterRepository.existsMedicalCenterByNameAndUserId(medicalCenter.getName(), id)) {
+            throw new InvalidMedicalCenterException("Validación: ya existe un centro médico registrado con ese nombre");
+        }
         // Realizar validación detallada
         List<String> validationErrors = validateMedicalCenter(medicalCenter, false);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidMedicalCenterException("Validation errors: " + String.join(", ", validationErrors));
+            throw new InvalidMedicalCenterException("Validación, campos vacios: " + String.join(", ", validationErrors));
         }
-        if(!validateUserMedicalCenter(user)){
-            throw new InvalidMedicalCenterException("Maximum number of medical centers according to the user's plan");
+        if (!validateUserMedicalCenter(user)) {
+            throw new InvalidMedicalCenterException("Máximo número de centros médicos registrados para el plan seleccionado");
         }
         // Guardar el centro médico en la base de datos
         MedicalCenter newMedicalCenter = medicalCenterRepository.save(medicalCenter);
@@ -60,13 +63,14 @@ public class MedicalCenterImpl implements MedicalCenterService {
 
         return newMedicalCenter;
     }
+
     @Override
     public MedicalCenter updateMedicalCenter(int id, MedicalCenter newMedicalCenter) {
 
         List<String> validationErrors = validateMedicalCenter(newMedicalCenter, true);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidMedicalCenterException("Validation errors: " + String.join(", ", validationErrors));
+            throw new InvalidMedicalCenterException("Validación, campos vacios: " + String.join(", ", validationErrors));
         }
         //Get the old medical center and update the relational values
         MedicalCenter oldMedicalCenter = getMedicalCenterById(id);
@@ -91,16 +95,16 @@ public class MedicalCenterImpl implements MedicalCenterService {
 
     @Override
     public void deleteMedicalCenter(int id) {
-        try {
 
-            MedicalCenter medicalCenter = getMedicalCenterById(id);
-            if ((medicalCenter.getRooms() == null) || medicalCenter.getRooms().isEmpty())
-                medicalCenterRepository.deleteById(id);
-            else
-                throw new InvalidMedicalCenterException("You must remove the rooms associated with this medical center.");
-        } catch (Exception ex) {
-            throw new InvalidMedicalCenterException("Deleting medical center", ex);
+
+        boolean hasRooms = medicalCenterRepository.existsMedicalCenterByIdAndRoomsIsNotEmpty(id);
+
+        if (hasRooms) {
+            throw new InvalidMedicalCenterException("Tiene salas asociadas al centro médico");
+        } else {
+            medicalCenterRepository.deleteById(id);
         }
+
     }
 
 
@@ -109,32 +113,34 @@ public class MedicalCenterImpl implements MedicalCenterService {
         List<String> validate = new ArrayList<>();
 
         if (medicalCenter.getLatitude().isEmpty() || medicalCenter.getLongitude().isEmpty()) {
-            validate.add("Coordinades");
+            validate.add("Coordenadas");
         }
         if (medicalCenter.getName().isEmpty()) {
-            validate.add("Name");
+            validate.add("Nombre");
         }
         if (medicalCenter.getDirection().isEmpty()) {
-            validate.add("Direction");
+            validate.add("Dirección");
         }
         if (medicalCenter.getEmail().isEmpty()) {
-            validate.add("Email");
+            validate.add("Correo");
         }
-        if (!update){
+        if (!update) {
             if (medicalCenter.getStatus() == null || medicalCenter.getStatus().equals("")) {
-                validate.add("Status");
+                validate.add("Estatus");
             }
         }
 
         return validate;
     }
+
     private void associateMedicalCenterWithUser(MedicalCenter medicalCenter, User user) {
         medicalCenter.setUser(user);
         medicalCenterRepository.save(medicalCenter);
     }
-    private boolean validateUserMedicalCenter(User user){
-       List<MedicalCenter> medicalCenters = user.getMedicalCenters();
-       //AQUI SE LE LA VARA
-       return true;
+
+    private boolean validateUserMedicalCenter(User user) {
+        List<MedicalCenter> medicalCenters = user.getMedicalCenters();
+        //AQUI SE LE LA VARA
+        return true;
     }
 }
