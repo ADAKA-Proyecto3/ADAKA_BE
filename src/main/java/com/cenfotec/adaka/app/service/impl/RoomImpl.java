@@ -2,10 +2,8 @@ package com.cenfotec.adaka.app.service.impl;
 
 import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Room;
-import com.cenfotec.adaka.app.domain.User;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.exception.InvalidRoomException;
-import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.RoomRepository;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
 import com.cenfotec.adaka.app.service.RoomService;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -41,6 +40,7 @@ public class RoomImpl implements RoomService {
             throw new InvalidRoomException("The ID does not exist: " + id);
         }
     }
+        // Listar salas con id usuario
 
     @Override
     public Room saveRoom(Room room, int id) {
@@ -96,6 +96,23 @@ public class RoomImpl implements RoomService {
         } catch (Exception ex) {
             throw new InvalidMedicalCenterException("Error deleting room", ex);
         }
+    }
+
+    @Override
+    public List<Room> getAllRoomsByUserId(int id) {
+
+        List<Room> rooms = new ArrayList<>();
+        List<Map<String, Object>> results = roomRepository.findAllRoomsByUserId(id);
+
+        for (Map<String, Object> result : results) {
+            Room room = (Room) result.get("room");
+            Integer medicalCenterId = (Integer) result.get("medicalCenterId");
+
+            // Asigna el ID del MedicalCenter al Room
+            room.setMedicalCenterId(medicalCenterId);
+            rooms.add(room);
+        }
+        return rooms;
     }
 
     private List<String> validateRooms(Room room) {

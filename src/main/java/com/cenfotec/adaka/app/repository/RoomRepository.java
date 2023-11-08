@@ -1,11 +1,14 @@
 package com.cenfotec.adaka.app.repository;
 
-import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Room;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RoomRepository extends CrudRepository<Room, Integer> {
     List<Room> findAll();
+    @Query("SELECT r AS room, mc.id AS medicalCenterId FROM Room r JOIN r.medicalCenter mc WHERE mc.user.id = ?1")
+    List<Map<String, Object>> findAllRoomsByUserId(int userId);
 }

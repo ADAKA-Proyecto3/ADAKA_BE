@@ -11,5 +11,5 @@ public interface RoomService {
     Room saveRoom(Room room, int id);
     Room updateRoom(int roomId, int medicalCenterId , Room room);
     void deleteRoom(int id);
-
+    List<Room> getAllRoomsByUserId(int id);
 }
