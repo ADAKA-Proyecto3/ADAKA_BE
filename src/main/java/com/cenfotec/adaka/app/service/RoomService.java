@@ -1,7 +1,6 @@
 package com.cenfotec.adaka.app.service;
 
 import com.cenfotec.adaka.app.domain.Room;
-import com.cenfotec.adaka.app.dto.RoomDTO;
 
 import java.util.List;
 
@@ -12,5 +11,5 @@ public interface RoomService {
     Room saveRoom(Room room, int id);
     Room updateRoom(int roomId, int medicalCenterId , Room room);
     void deleteRoom(int id);
-    List<RoomDTO> getAllRoomsByUserId(int id);
+    List<Room> getAllRoomsByUserId(int id);
 }

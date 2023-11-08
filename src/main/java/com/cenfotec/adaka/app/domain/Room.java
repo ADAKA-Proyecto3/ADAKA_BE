@@ -51,6 +51,7 @@ public class Room {
     @JoinColumn(name = "fk_medicalCenter")
     @JsonBackReference
     private MedicalCenter medicalCenter;
+
     @Transient
     private int medicalCenterId;
 }
