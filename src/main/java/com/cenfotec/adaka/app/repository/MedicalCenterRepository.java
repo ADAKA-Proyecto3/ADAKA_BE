@@ -2,6 +2,9 @@ package com.cenfotec.adaka.app.repository;
 
 import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.dto.MedicalCenterDTO;
+import com.cenfotec.adaka.app.dto.RoomDTO;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +15,7 @@ public interface MedicalCenterRepository extends CrudRepository<MedicalCenter, I
     List<MedicalCenter> findByUserId(int userId);
     boolean existsMedicalCenterByNameAndUserId (String name, int userId);
     boolean existsMedicalCenterByIdAndRoomsIsNotEmpty(int id);
+    @Query("SELECT New com.cenfotec.adaka.app.dto.MedicalCenterDTO(mc.name,  mc.direction, mc.latitude, mc.longitude, '') FROM MedicalCenter mc")
+    List<MedicalCenterDTO> findAllMedicalCenters();
 }
+

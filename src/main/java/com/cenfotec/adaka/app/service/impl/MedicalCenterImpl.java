@@ -3,6 +3,7 @@ package com.cenfotec.adaka.app.service.impl;
 import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Status;
 import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.dto.MedicalCenterDTO;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
@@ -105,6 +106,16 @@ public class MedicalCenterImpl implements MedicalCenterService {
             medicalCenterRepository.deleteById(id);
         }
 
+    }
+
+    /**
+     * Get all medical center info for map
+     * */
+    @Override
+    public List<MedicalCenterDTO> getAllMedicalCenters() {
+       List<MedicalCenterDTO> medicalCenterDTOList = medicalCenterRepository.findAllMedicalCenters();
+
+       return medicalCenterDTOList;
     }
 
 
