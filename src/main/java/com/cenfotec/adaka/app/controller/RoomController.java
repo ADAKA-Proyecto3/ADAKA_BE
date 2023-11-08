@@ -4,6 +4,7 @@ import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Response;
 import com.cenfotec.adaka.app.domain.Room;
 import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.dto.RoomDTO;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.exception.InvalidRoomException;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
@@ -31,10 +32,26 @@ public class RoomController {
 
 
     @GetMapping(value = "/all/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<?>> getAllRooms(@PathVariable int id) {
+    public ResponseEntity<Response<?>> getAllRoomsByMedicalCenterId(@PathVariable int id) {
         log.debug("get all rooms method  started");
         try {
             List<Room> rooms = roomService.getAllRooms(id);
+            return ResponseEntity.ok(new Response<>("Éxito", rooms));
+
+        } catch (InvalidRoomException ex) {
+            // Manejo específico para la excepción InvalidMedicalCenterException
+            log.error("Error al obtener las salas del centro medico: " + ex.getMessage(), ex);
+
+            // Manejo general para otras excepciones
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
+        }
+    }
+
+    @GetMapping(value = "/allUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<?>> getAllRoomsByUserId(@PathVariable int id) {
+        log.debug("get all rooms by user id method  started");
+        try {
+            List<RoomDTO> rooms = roomService.getAllRoomsByUserId(id);
             return ResponseEntity.ok(new Response<>("Éxito", rooms));
 
         } catch (InvalidRoomException ex) {
