@@ -4,6 +4,7 @@ import com.cenfotec.adaka.app.domain.*;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
+import com.cenfotec.adaka.app.service.EmailService;
 import com.cenfotec.adaka.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,9 @@ public class UserServiceImpl implements UserService {
     private SubscriptionRepository subscriptionRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    //@Autowired
+    EmailServiceImpl emailService = new EmailServiceImpl();
 
     @Autowired
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
@@ -48,10 +52,16 @@ public class UserServiceImpl implements UserService {
         if(parentId>=1 && medicalCenterId>=1 & admin!=null & medicalCenter!=null){
             user.setManager(parentId);
             user.setAssignedMedicalCenter(medicalCenterId);
+            user.setPassword(generatePassword());
+            emailService.sendMessage(user.getEmail(),"Nuevos credenciales",user.getPassword());
             return userRepository.save(user);
 
         }else  return null;
 
+    }
+//ToDo add real logic based in parameters for secured passwords
+    private String generatePassword() {
+        return "123Test456@";
     }
 
     @Override

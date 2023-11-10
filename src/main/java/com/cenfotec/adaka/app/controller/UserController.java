@@ -1,6 +1,7 @@
 package com.cenfotec.adaka.app.controller;
 
 import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.service.EmailService;
 import com.cenfotec.adaka.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
