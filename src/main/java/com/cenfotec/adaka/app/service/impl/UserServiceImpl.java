@@ -22,8 +22,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //@Autowired
-    EmailServiceImpl emailService = new EmailServiceImpl();
+    @Autowired
+    EmailServiceImpl emailService;
 
     @Autowired
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
