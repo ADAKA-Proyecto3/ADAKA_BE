@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -35,16 +36,18 @@ public class Device {
          * Installation date set for the device
          */
 
-        Date installation;
+        LocalDateTime  installation;
 
+        @OneToOne(mappedBy = "device")
+        Room room;
 
+        /**
+         * User reference
+         * */
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "fk_room")
+        @JoinColumn(name = "fk_user")
         @JsonBackReference
-        private Room room;
-
-        @Transient
-        private int roomId;
+        private User user;
 
 }
 

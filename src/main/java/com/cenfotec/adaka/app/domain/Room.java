@@ -54,4 +54,9 @@ public class Room {
 
     @Transient
     private int medicalCenterId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "device_id", referencedColumnName = "id")
+    private Device device ;
+
 }

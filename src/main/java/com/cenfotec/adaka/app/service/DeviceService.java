@@ -8,11 +8,10 @@ import java.util.List;
 
 public interface DeviceService {
 
-    List<Device> getAllDevcesByUserId(int id);
-
-    List<Device> getAllDevicesByUserId(int id);
+    List<Device> getAllDevices(int adminId);
+    List<Device> getAllDevicesByRoom(int roomId);
     Device getDeviceById(int id);
-    Device saveDevice(Device device, int id);
+    Device saveDevice(Device device);
     Device updateDevice(int id, Device device);
     void deleteDevice(int id);
 }
