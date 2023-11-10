@@ -114,7 +114,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
     @Override
     public List<MedicalCenterDTO> getAllMedicalCenters() {
        List<MedicalCenterDTO> medicalCenterDTOList = medicalCenterRepository.findAllMedicalCenters();
-
+        //Falta llamar a los datos de cada centro medico y saber el estado
        return medicalCenterDTOList;
     }
 
