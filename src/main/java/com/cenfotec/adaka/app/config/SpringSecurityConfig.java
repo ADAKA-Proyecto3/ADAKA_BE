@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,6 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 @Configuration
 public class SpringSecurityConfig {
@@ -45,6 +48,7 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/users/{email}").hasAnyRole("ADMIN", "USER")
                 .antMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.POST, "/users/{id}/{id}").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
 
                 .antMatchers(HttpMethod.POST, "/device").hasRole("ADMIN")
@@ -63,6 +67,7 @@ public class SpringSecurityConfig {
 
                 .antMatchers(HttpMethod.POST, "/subscription/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/lecture/{id}").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/recover").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
@@ -95,5 +100,6 @@ public class SpringSecurityConfig {
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
+
 
 }

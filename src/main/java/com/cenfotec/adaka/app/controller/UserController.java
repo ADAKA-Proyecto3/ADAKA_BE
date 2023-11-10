@@ -1,7 +1,7 @@
 package com.cenfotec.adaka.app.controller;
 
 import com.cenfotec.adaka.app.domain.User;
-import com.cenfotec.adaka.app.service.EmailService;
+import com.cenfotec.adaka.app.exception.UserNotFoundException;
 import com.cenfotec.adaka.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class UserController {
     private Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("all/{managerId}")
-    public ResponseEntity<List<User>> getAllUsers(@PathVariable int  managerId) {
+    public ResponseEntity<List<User>> getAllUsers(@PathVariable int managerId) {
         log.debug("get all ser method  started");
         List<User> users = userService.getAllUsers(managerId);
         return ResponseEntity.ok(users);
@@ -41,7 +41,8 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping(value = "email/{email}",  produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @GetMapping(value = "email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         log.debug("getUserByEmail method  started");
         User user = userService.getUserByEmail(email);
@@ -53,9 +54,9 @@ public class UserController {
     }
 
     @PostMapping(value = "/{parentId}/{medicalCenterId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> saveUser(@RequestBody User user, @PathVariable int parentId, @PathVariable int medicalCenterId  ) {
+    public ResponseEntity<User> saveUser(@RequestBody User user, @PathVariable int parentId, @PathVariable int medicalCenterId) {
         log.debug("saveUser method  started");
-         User savedUser =  userService.saveUser(user, parentId, medicalCenterId);
+        User savedUser = userService.saveUser(user, parentId, medicalCenterId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
@@ -82,5 +83,17 @@ public class UserController {
             return ResponseEntity.noContent().build(); // 204
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping(value = "/recover", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> saveUser(@RequestBody String email) {
+        log.debug("saveUser method  started");
+        try {
+            userService.resetUserPassword(email);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Se ha enviado un correo con las credenciales");
+        } catch (UserNotFoundException unfe) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(unfe.getMessage());
+
+        }
     }
 }
