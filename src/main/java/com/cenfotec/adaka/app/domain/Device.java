@@ -38,8 +38,8 @@ public class Device {
 
         LocalDateTime  installation;
 
-        @OneToOne(mappedBy = "device")
-        Room room;
+
+        int  roomId;
 
         /**
          * User reference

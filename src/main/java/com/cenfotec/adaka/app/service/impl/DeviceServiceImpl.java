@@ -19,6 +19,8 @@ public class DeviceServiceImpl implements DeviceService {
     private DeviceRepository deviceRepository; // Create this repository interface
     @Autowired
     private RoomRepository roomRepository; // Create this repository interface
+    @Autowired
+    private RoomImpl roomservice;
 
 
     @Override
@@ -28,7 +30,7 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public List<Device> getAllDevicesByRoom(int roomId) {
-        return deviceRepository.findByRoom_Id(roomId);
+        return deviceRepository.findByRoomId(roomId);
     }
 
     @Override
@@ -38,7 +40,12 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public Device saveDevice(Device device) {
-        return deviceRepository.save(device);
+        int roomId = device.getRoomId();
+       if(roomservice.getRoomById(roomId)!=null){
+           return deviceRepository.save(device);
+       }else throw new IllegalArgumentException("si la sala es agregada al device, la misma debe de existir previamente en la bd ");
+
+
     }
 
     @Override
