@@ -8,5 +8,6 @@ public enum Status {
     ACTIVE,
     INACTIVE,
     BLOCKED,
+    FREEZE,
     OTHER
 }
