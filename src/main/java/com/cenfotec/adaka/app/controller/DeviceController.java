@@ -32,9 +32,9 @@ public class DeviceController {
             return ResponseEntity.ok().body(device);
         }
 
-        @PostMapping
-        public Device createDevice(@RequestBody Device device) {
-            return deviceService.saveDevice(device);
+        @PostMapping("/{adminId}/save")
+        public Device createDevice(@RequestBody Device device,@PathVariable int adminId ) {
+            return deviceService.saveDevice(device, adminId);
         }
 
         @PutMapping("/{id}")

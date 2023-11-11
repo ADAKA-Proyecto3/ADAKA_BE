@@ -11,7 +11,7 @@ public interface DeviceService {
     List<Device> getAllDevices(int adminId);
     List<Device> getAllDevicesByRoom(int roomId);
     Device getDeviceById(int id);
-    Device saveDevice(Device device);
+    Device saveDevice(Device device,int admin);
     Device updateDevice(int id, Device device);
     void deleteDevice(int id);
 }
