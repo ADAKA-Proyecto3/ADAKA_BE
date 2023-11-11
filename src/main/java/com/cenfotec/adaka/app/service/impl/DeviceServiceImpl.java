@@ -49,7 +49,7 @@ public class DeviceServiceImpl implements DeviceService {
            device.setUser(user);
            device.setInstallation(LocalDateTime.now());
            room.setDeviceId(device.getId());
-           roomservice.updateRoom(room.getId(),room.getMedicalCenterId(),room);///add the device id to the room
+           roomservice.updateRoom(room.getId(),room.getMedicalCenter().getId(),room);///add the device id to the room
            return deviceRepository.save(device);
        }else throw new IllegalArgumentException("si la sala es agregada al device, la misma debe de existir previamente en la bd ");
 
