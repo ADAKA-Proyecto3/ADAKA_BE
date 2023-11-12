@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User resetUserPassword(String email) {
-        User temp = null;
+        User temp ;
         String password =generatePassword();
          temp = getUserByEmail(email);
          if(temp!=null){
