@@ -1,6 +1,7 @@
 package com.cenfotec.adaka.app.controller;
 
 import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.dto.EmailDto;
 import com.cenfotec.adaka.app.exception.UserNotFoundException;
 import com.cenfotec.adaka.app.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,11 +87,11 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping(value = "/recover", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> saveUser(@RequestBody String email) {
+    @PostMapping(value = "/recover",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> saveUser(@RequestBody EmailDto emailDto) {
         log.debug("saveUser method  started");
         try {
-            userService.resetUserPassword(email);
+            userService.resetUserPassword(emailDto.getEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body("Se ha enviado un correo con las credenciales");
         } catch (UserNotFoundException unfe) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(unfe.getMessage());
