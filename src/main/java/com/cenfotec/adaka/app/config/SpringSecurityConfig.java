@@ -68,6 +68,7 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.POST, "/subscription/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/lecture/{id}").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/recover").permitAll()
+                .antMatchers("/metrics/**").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
