@@ -56,6 +56,11 @@ public class Room {
     private int medicalCenterId;
 
 
-    private int deviceId ;
+    /**
+     * Device  reference
+     * */
+    @OneToOne(mappedBy = "room", cascade = CascadeType.ALL)//table name
+    @JsonBackReference
+    private Device device;
 
 }

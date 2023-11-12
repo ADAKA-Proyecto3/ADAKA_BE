@@ -38,8 +38,13 @@ public class Device {
 
         LocalDateTime  installation;
 
-
-        int  roomId;
+        /**
+         * Room  reference
+         * */
+        @OneToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "fk_room")
+        @JsonBackReference
+        Room room;
 
         /**
          * User reference

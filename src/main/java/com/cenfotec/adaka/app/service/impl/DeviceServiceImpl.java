@@ -42,14 +42,14 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public Device saveDevice(Device device, int admin) {
-        int roomId = device.getRoomId();
+        int roomId = device.getRoom().getId();
         Room room = roomservice.getRoomById(roomId);
         User user  = userService.getUserById(admin);
        if(room!=null && user!=null && user.getRole().equals(Role.ADMIN)){
            device.setUser(user);
            device.setInstallation(LocalDateTime.now());
-           room.setDeviceId(device.getId());
-           roomservice.updateRoom(room.getId(),room.getMedicalCenter().getId(),room);///add the device id to the room
+           room.setDevice(device);
+//           roomservice.updateRoom(room.getId(),room.getMedicalCenter().getId(),room);///add the device id to the room
            return deviceRepository.save(device);
        }else throw new IllegalArgumentException("si la sala es agregada al device, la misma debe de existir previamente en la bd ");
 
