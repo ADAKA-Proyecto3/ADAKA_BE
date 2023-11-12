@@ -5,7 +5,6 @@ import com.cenfotec.adaka.app.exception.UserNotFoundException;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
-import com.cenfotec.adaka.app.service.EmailService;
 import com.cenfotec.adaka.app.service.UserService;
 import com.cenfotec.adaka.app.util.user.PasswordGeneratorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +42,30 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+//    @Override
+//    public User getUserByEmail(String email) {
+//        Optional<User> userOptional = this.userRepository.getUserByEmail(email);
+//        return userOptional.orElse(null);
+//    }
+
     @Override
     public User getUserByEmail(String email) {
         Optional<User> userOptional = this.userRepository.getUserByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            if (!user.getRole().equals("ADMIN")) {
+                Optional<MedicalCenter> medicalCenterOptional = medicalCenterRepository.findById(user.getAssignedMedicalCenter());
+                if (medicalCenterOptional.isPresent()) {
+                    MedicalCenter medicalCenter = medicalCenterOptional.get();
+                    List<MedicalCenter> userMedicalCenters = user.getMedicalCenters();
+                    userMedicalCenters.add(medicalCenter);
+                    user.setMedicalCenters(userMedicalCenters);
+                }
+            }
+        }
+
         return userOptional.orElse(null);
     }
 
@@ -95,7 +115,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User  updateUser(int id, User user) {
         user.setId(id);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        //user.setPassword(passwordEncoder.encode(user.getPassword()));
        return userRepository.save(user);
     }
 

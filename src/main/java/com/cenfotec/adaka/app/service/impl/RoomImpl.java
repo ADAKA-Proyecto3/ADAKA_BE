@@ -2,11 +2,14 @@ package com.cenfotec.adaka.app.service.impl;
 
 import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Room;
+import com.cenfotec.adaka.app.domain.User;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.exception.InvalidRoomException;
 import com.cenfotec.adaka.app.repository.RoomRepository;
+import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
 import com.cenfotec.adaka.app.service.RoomService;
+import com.cenfotec.adaka.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,9 @@ public class RoomImpl implements RoomService {
     private RoomRepository roomRepository; // Create this repository interface
     @Autowired
     private MedicalCenterService medicalCenterService;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public List<Room> getAllRooms(int id) {
@@ -98,20 +104,34 @@ public class RoomImpl implements RoomService {
         }
     }
 
+
     @Override
     public List<Room> getAllRoomsByUserId(int id) {
 
         List<Room> rooms = new ArrayList<>();
         List<Map<String, Object>> results = roomRepository.findAllRoomsByUserId(id);
+        User user = userService.getUserById(id);
 
-        for (Map<String, Object> result : results) {
-            Room room = (Room) result.get("room");
-            Integer medicalCenterId = (Integer) result.get("medicalCenterId");
+        if (user.getRole().name().equals("ADMIN")){
+            for (Map<String, Object> result : results) {
+                Room room = (Room) result.get("room");
+                Integer medicalCenterId = (Integer) result.get("medicalCenterId");
 
-            // Asigna el ID del MedicalCenter al Room
-            room.setMedicalCenterId(medicalCenterId);
-            rooms.add(room);
+                // Asigna el ID del MedicalCenter al Room
+                room.setMedicalCenterId(medicalCenterId);
+                rooms.add(room);
+            }
+        }else{
+            MedicalCenter medicalCenter = medicalCenterService.getMedicalCenterById(user.getAssignedMedicalCenter());
+            List<Room> ListRoom = medicalCenter.getRooms();
+            for ( Room roomElement : ListRoom) {
+                Room room = roomElement;
+                // Asigna el ID del MedicalCenter al Room
+                room.setMedicalCenterId(medicalCenter.getId());
+                rooms.add(room);
+            }
         }
+
         return rooms;
     }
 
