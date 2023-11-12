@@ -71,8 +71,7 @@ public class HtmlToStringUtil {
         htmlStringBuilder.append("       \n");
         htmlStringBuilder.append("        <p style=\"color: #555; font-size: 16px; line-height: 1.6;\">Hola " + name + ",</p>\n");
         htmlStringBuilder.append("        <p style=\"color: #555; font-size: 16px; line-height: 1.6;\">La a contraseña temporal es:   <strong>" + password + "</strong></p>\n");
-        htmlStringBuilder.append("        <p style=\"color: #555; font-size: 16px; line-height: 1.6;\">Por favor, utiliza esta contraseña para iniciar sesión en tu cuenta,  cambiarla después de  inicio de sesión.</p>\n");
-        htmlStringBuilder.append("\n");
+        htmlStringBuilder.append("        <p style=\"color: #555; font-size: 16px; line-height: 1.6;\">Por favor, utiliza esta contraseña para iniciar sesión en tu cuenta, recuerda cambiarla después de  inicio de sesión.</p>\n");
         htmlStringBuilder.append("        <p style=\"color: #555; font-size: 16px; line-height: 1.6;\">Saludos cordiales,<br>ZhenAir <span style=\"color: red;\">❤</span>  </p>\n");
         htmlStringBuilder.append("    </div>\n");
         htmlStringBuilder.append("\n");
