@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,6 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 @Configuration
 public class SpringSecurityConfig {
@@ -43,26 +46,28 @@ public class SpringSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests()
                 .antMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/users/{email}").hasAnyRole("ADMIN", "USER")
-                .antMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.GET, "/users/{email}").hasAnyRole("ADMIN", "NURSE","MEDICAL_DOCTOR")
+                .antMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "NURSE","MEDICAL_DOCTOR")
+                .antMatchers(HttpMethod.POST, "/users/{id}/{id}").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
 
                 .antMatchers(HttpMethod.POST, "/device").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/devices").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/devices/{id}").hasAnyRole("ADMIN","USER")
+                .antMatchers(HttpMethod.GET, "/devices/{id}").hasAnyRole("ADMIN","NURSE","MEDICAL_DOCTOR")
                 .antMatchers(HttpMethod.DELETE, "/devices/{id}").hasRole("ADMIN")
 
-                .antMatchers(HttpMethod.POST, "/medicalcenters").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PUT, "/medicalcenters/{id}").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/medicalcenters").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/medicalcenters/{id}").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/medicalcenters/{id}").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/medicalcenters/room/{id}").hasAnyRole("ADMIN","USER")
-                .antMatchers(HttpMethod.GET, "/medicalcenters/room/").hasAnyRole("ADMIN","USER")
+                .antMatchers(HttpMethod.POST, "/medical").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/medical/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/medical").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/medical/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/medical/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/medical/room/{id}").hasAnyRole("ADMIN","NURSE","MEDICAL_DOCTOR")
+                .antMatchers(HttpMethod.GET, "/medical/room/").hasAnyRole("ADMIN","NURSE","MEDICAL_DOCTOR")
 
 
                 .antMatchers(HttpMethod.POST, "/subscription/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/lecture/{id}").permitAll()
+                .antMatchers(HttpMethod.POST, "/user/recover").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
@@ -95,5 +100,6 @@ public class SpringSecurityConfig {
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
+
 
 }

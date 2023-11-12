@@ -10,6 +10,7 @@ public interface  UserService {
     User getUserById(int id);
     User getUserByEmail(String email);
     User saveUser(User user, int parentId, int medicalCenterId);
+    User resetUserPassword(String email);
     User updateUser(int id, User user);
     String  deleteUser(int id);
 }

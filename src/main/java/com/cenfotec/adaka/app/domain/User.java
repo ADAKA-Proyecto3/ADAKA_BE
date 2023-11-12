@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.stereotype.Component;
 
 
 import javax.persistence.*;
@@ -52,6 +54,7 @@ import java.util.List;
     /**
      * Email for notifications
      */
+    @Column(unique=true)
     String email;
     /**
      * String encrypted password
