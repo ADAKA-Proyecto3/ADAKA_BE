@@ -69,6 +69,13 @@ import java.util.List;
     List<MedicalCenter> medicalCenters = new ArrayList<>();
 
     /**
+     * List of medical centers per  user
+     * */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    List<Device> devices = new ArrayList<>();
+
+    /**
      * Subscription for the Admin user otherwise empty.
      */
     @ManyToOne
