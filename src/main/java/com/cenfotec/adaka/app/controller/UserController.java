@@ -63,17 +63,28 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
         log.debug("update User method  started");
         User existingUser = userService.getUserById(id);
         if (existingUser != null) {
-            userService.updateUser(id, user);
-            return ResponseEntity.noContent().build();
+           User modUser = userService.updateUser(id, user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(modUser);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
+    @PutMapping(value = "/password/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updatePasswordUser(@PathVariable int id, @RequestBody User user) {
+        log.debug("update User method  started");
+        User existingUser = userService.getUserById(id);
+        if (existingUser != null) {
+            User modUser = userService.updatePasswordUser(id, user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(modUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id) {

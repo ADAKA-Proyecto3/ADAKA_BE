@@ -50,6 +50,7 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "NURSE","MEDICAL_DOCTOR")
                 .antMatchers(HttpMethod.POST, "/users/{id}/{id}").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST    , "/users/password/{id}").permitAll()
 
                 .antMatchers(HttpMethod.POST, "/device").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/devices").hasRole("ADMIN")
