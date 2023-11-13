@@ -13,4 +13,5 @@ public interface  UserService {
     User resetUserPassword(String email);
     User updateUser(int id, User user);
     String  deleteUser(int id);
+    User updatePasswordUser(int id, User user);
 }
