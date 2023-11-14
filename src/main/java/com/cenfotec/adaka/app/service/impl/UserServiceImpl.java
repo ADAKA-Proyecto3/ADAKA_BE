@@ -125,6 +125,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User  updateSubUser(int id, User user) {
+
+        user.setId(id);
+
+        return userRepository.save(user);
+    }
+
+    @Override
     public User updatePasswordUser(int id, User user) {
         User oldUser = getUserById(id);
         oldUser.setPassword(passwordEncoder.encode(user.getPassword()));

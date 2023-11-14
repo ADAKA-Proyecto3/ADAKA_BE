@@ -63,11 +63,22 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updateSubUser(@PathVariable int id, @RequestBody User user) {
+        log.debug("update User method  started");
+        User existingUser = userService.getUserById(id);
+        if (existingUser != null) {
+           User modUser = userService.updateSubUser(id, user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(modUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping(value = "/{id}/updateUser", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
         log.debug("update User method  started");
         User existingUser = userService.getUserById(id);
         if (existingUser != null) {
-           User modUser = userService.updateUser(id, user);
+            User modUser = userService.updateUser(id, user);
             return ResponseEntity.status(HttpStatus.CREATED).body(modUser);
         } else {
             return ResponseEntity.notFound().build();
