@@ -128,4 +128,17 @@ public class RoomController {
         }
     }
 
+    @PutMapping(value = "/add/device/{roomId}/{deviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Room> updateRoom(@PathVariable int roomId, @PathVariable int deviceId) {
+        log.debug("Adding Devices to Room process  started");
+
+        try {
+            Room updatedRoom =  roomService.updateAddDeviceToRoom(roomId,deviceId);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
+        } catch (InvalidRoomException ex) {
+            log.error("Error al actualizar la sala: " + ex.getMessage(), ex.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }
