@@ -127,6 +127,7 @@ public class UserServiceImpl implements UserService {
     public User updatePasswordUser(int id, User user) {
         User oldUser = getUserById(id);
         oldUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        oldUser.setStatus(Status.ACTIVE);
        return userRepository.save(oldUser);
     }
 
