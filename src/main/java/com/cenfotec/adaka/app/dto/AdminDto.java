@@ -19,6 +19,4 @@ public class AdminDto {
     String paymentId;
     String planName;
     String  shippingAddress;
-
-
 }

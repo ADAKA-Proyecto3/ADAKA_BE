@@ -55,7 +55,7 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.POST, "/device").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/devices").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/devices/{id}").hasAnyRole("ADMIN","NURSE","MEDICAL_DOCTOR")
-                .antMatchers(HttpMethod.DELETE, "/devices/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/devices/delete/{id}").hasRole("ADMIN")
 
                 .antMatchers(HttpMethod.POST, "/medical").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/medical/{id}").hasRole("ADMIN")
@@ -69,7 +69,9 @@ public class SpringSecurityConfig {
 
                 .antMatchers(HttpMethod.POST, "/subscription/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/lecture/{id}").permitAll()
-                .antMatchers(HttpMethod.POST, "/user/recover").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/users/recover").permitAll()
+                .antMatchers("/metrics/**").permitAll()
 
                 .anyRequest().authenticated()
                 .and()

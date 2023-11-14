@@ -54,4 +54,13 @@ public class Room {
 
     @Transient
     private int medicalCenterId;
+
+
+    /**
+     * Device  reference
+     * */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_device")
+    private Device device;
+
 }
