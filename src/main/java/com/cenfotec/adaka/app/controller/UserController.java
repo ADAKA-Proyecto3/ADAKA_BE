@@ -110,11 +110,11 @@ public class UserController {
     }
 
     @PostMapping(value = "/recover",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> saveUser(@RequestBody EmailDto emailDto) {
+    public ResponseEntity<?> saveUser(@RequestBody EmailDto emailDto) {
         log.debug("saveUser method  started");
         try {
             userService.resetUserPassword(emailDto.getEmail());
-            return ResponseEntity.status(HttpStatus.CREATED).body("Se ha enviado un correo con las credenciales");
+            return ResponseEntity.status(HttpStatus.CREATED).body(emailDto);
         } catch (UserNotFoundException unfe) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(unfe.getMessage());
 
