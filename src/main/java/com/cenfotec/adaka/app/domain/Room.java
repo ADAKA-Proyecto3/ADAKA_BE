@@ -59,8 +59,8 @@ public class Room {
     /**
      * Device  reference
      * */
-    @OneToOne(mappedBy = "room", cascade = CascadeType.ALL)//table name
-    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_device")
     private Device device;
 
 }

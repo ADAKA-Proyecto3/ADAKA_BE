@@ -1,14 +1,16 @@
 package com.cenfotec.adaka.app.service.impl;
 
 import com.cenfotec.adaka.app.domain.*;
+import com.cenfotec.adaka.app.exception.UserNotFoundException;
 import com.cenfotec.adaka.app.repository.DeviceRepository;
-import com.cenfotec.adaka.app.repository.RoomRepository;
-
+import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,23 +19,24 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     private DeviceRepository deviceRepository; // Create this repository interface
-    @Autowired
-    private RoomRepository roomRepository; // Create this repository interface
-    @Autowired
-    private RoomImpl roomservice;
+
     @Autowired
     private UserServiceImpl userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Override
     public List<Device> getAllDevices(int adminId) {
-        return deviceRepository.findDevicesByUser_Id(adminId);
+
+        User u = userRepository.findById(adminId).get();
+        if(u!=null && u.getRole().equals(Role.ADMIN)){
+            return  deviceRepository.findAllByUser(u);
+        }else  throw new UserNotFoundException("No hay administradores con ese ID registrados en la BD");
+
     }
 
-    @Override
-    public List<Device> getAllDevicesByRoom(int roomId) {
-        return deviceRepository.findByRoomId(roomId);
-    }
 
     @Override
     public Device getDeviceById(int id) {
@@ -42,27 +45,19 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public Device saveDevice(Device device, int admin) {
-        int roomId = device.getRoom().getId();
-        Room room = roomservice.getRoomById(roomId);
         User user  = userService.getUserById(admin);
-       if(room!=null && user!=null && user.getRole().equals(Role.ADMIN)){
+       if( user!=null && user.getRole().equals(Role.ADMIN)){
            device.setUser(user);
            device.setInstallation(LocalDateTime.now());
-           room.setDevice(device);
-//           roomservice.updateRoom(room.getId(),room.getMedicalCenter().getId(),room);///add the device id to the room
            return deviceRepository.save(device);
-       }else throw new IllegalArgumentException("si la sala es agregada al device, la misma debe de existir previamente en la bd ");
-
+       }else throw new UserNotFoundException("No hay administradores con ese ID registrados en la BD");
 
     }
 
-    @Override
-    public Device updateDevice(int id, Device device) {
-        return deviceRepository.save(device);
-    }
 
     @Override
     public void deleteDevice(int id) {
         deviceRepository.deleteById(id);
     }
+
 }

@@ -55,7 +55,7 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.POST, "/device").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/devices").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/devices/{id}").hasAnyRole("ADMIN","NURSE","MEDICAL_DOCTOR")
-                .antMatchers(HttpMethod.DELETE, "/devices/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/devices/delete/{id}").hasRole("ADMIN")
 
                 .antMatchers(HttpMethod.POST, "/medical").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/medical/{id}").hasRole("ADMIN")

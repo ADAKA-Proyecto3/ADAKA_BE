@@ -5,13 +5,11 @@ import com.cenfotec.adaka.app.exception.UserNotFoundException;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
-import com.cenfotec.adaka.app.service.EmailService;
 import com.cenfotec.adaka.app.service.UserService;
 import com.cenfotec.adaka.app.util.user.PasswordGeneratorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -42,12 +40,6 @@ public class UserServiceImpl implements UserService {
     public User getUserById(int id) {
         return userRepository.findById(id).orElse(null);
     }
-
-//    @Override
-//    public User getUserByEmail(String email) {
-//        Optional<User> userOptional = this.userRepository.getUserByEmail(email);
-//        return userOptional.orElse(null);
-//    }
 
     @Override
     public User getUserByEmail(String email) {
