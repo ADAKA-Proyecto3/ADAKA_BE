@@ -81,6 +81,7 @@ public class UserServiceImpl implements UserService {
             user.setManager(parentId);
             user.setAssignedMedicalCenter(medicalCenterId);
             user.setPassword(passwordEncoder.encode(password));
+            user.setStatus(Status.FREEZE);
             temp = user;
             if(userRepository.save(user)!=null){
                 emailService.sendMessage(temp,password);
