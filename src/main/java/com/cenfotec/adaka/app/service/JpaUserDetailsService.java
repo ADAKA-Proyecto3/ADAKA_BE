@@ -1,6 +1,7 @@
 package com.cenfotec.adaka.app.service;
 
 import com.cenfotec.adaka.app.domain.Role;
+import com.cenfotec.adaka.app.domain.Status;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,13 +39,18 @@ public class JpaUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
 
+        boolean credentialNonLocked = true;
+        if(user.getStatus().equals(Status.INACTIVE) ){
+            credentialNonLocked = false;
+        }
+
         return new User(
                 user.getEmail(),
                 user.getPassword(),
                 true,
                 true,
                 true,
-                true,
+                credentialNonLocked,
                 authorities);
 
     }

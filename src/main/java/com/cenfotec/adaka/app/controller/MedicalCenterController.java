@@ -3,6 +3,7 @@ package com.cenfotec.adaka.app.controller;
 
 import com.cenfotec.adaka.app.domain.MedicalCenter;
 import com.cenfotec.adaka.app.domain.Response;
+import com.cenfotec.adaka.app.dto.MedicalCenterDTO;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/medical")// controller
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
 public class MedicalCenterController {
     @Autowired
     private MedicalCenterService medicalCenterService;
@@ -129,6 +130,22 @@ public class MedicalCenterController {
                 // Manejo general para otras excepciones
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
             }
+        }
+    }
+
+    //para la informacion del mapa
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<?>> getAllMedicalCenters() {
+        log.debug("get all MedicalCenter method  started");
+        try {
+            List<MedicalCenterDTO> medicalCenters = medicalCenterService.getAllMedicalCenters();
+            return ResponseEntity.ok(new Response<>("Éxito", medicalCenters));
+
+        } catch (InvalidMedicalCenterException ex) {
+            // Manejo específico para la excepción InvalidMedicalCenterException
+            log.error("Error al obtener los centros medicos: " + ex.getMessage(), ex);
+            // Manejo general para otras excepciones
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
         }
     }
 }
