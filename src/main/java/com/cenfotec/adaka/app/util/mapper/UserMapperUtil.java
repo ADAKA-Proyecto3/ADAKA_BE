@@ -5,7 +5,6 @@ import com.cenfotec.adaka.app.domain.Status;
 import com.cenfotec.adaka.app.domain.Subscription;
 import com.cenfotec.adaka.app.domain.User;
 import com.cenfotec.adaka.app.dto.AdminDto;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +13,7 @@ public class UserMapperUtil {
     public static User  getAdminUserFromDto(AdminDto dto){
 
         User  user = new User();
-        user.setRole(Role.ADMIN);
+        user.setRole(Role.ROLE_ADMIN);
         user.setStatus(Status.ACTIVE);
         user.setSubscription(getSubscritionFromDto(dto));
         user.setEmail(dto.getEmail());

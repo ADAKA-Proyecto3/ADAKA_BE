@@ -13,4 +13,5 @@ public interface RoomService {
     Room updateAddDeviceToRoom(int roomId, int deviceId);
     void deleteRoom(int id);
     List<Room> getAllRoomsByUserId(int id);
+
 }

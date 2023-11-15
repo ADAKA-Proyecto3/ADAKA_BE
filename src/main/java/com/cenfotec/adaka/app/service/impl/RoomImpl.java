@@ -182,11 +182,12 @@ public class RoomImpl implements RoomService {
             throw new InvalidRoomException("Validation errors: Error Updating Rooms, device not found");
         }
         Room dbRoom = room.get();
-        int idOld = dbRoom.getDevice().getId();
-        if (idOld == deviceId) {
-            throw new InvalidRoomException("Validation errors: Error Updating Rooms, the room already have a device, only one device per room is allowed");
+        if(dbRoom.getDevice()!=null){
+            int idOld = dbRoom.getDevice().getId();
+            if (idOld == deviceId) {
+                throw new InvalidRoomException("Validation errors: Error Updating Rooms, the room already have a device, only one device per room is allowed");
+            }
         }
-
         dbRoom.setDevice(d);
         return roomRepository.save(dbRoom);
     }
