@@ -10,6 +10,7 @@ public interface RoomService {
     Room getRoomById(int id);
     Room saveRoom(Room room, int id);
     Room updateRoom(int roomId, int medicalCenterId , Room room);
+    Room updateAddDeviceToRoom(int roomId, int deviceId);
     void deleteRoom(int id);
     List<Room> getAllRoomsByUserId(int id);
 }

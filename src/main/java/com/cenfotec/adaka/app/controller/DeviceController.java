@@ -4,7 +4,6 @@ import com.cenfotec.adaka.app.domain.Device;
 import com.cenfotec.adaka.app.domain.Response;
 import com.cenfotec.adaka.app.exception.UserNotFoundException;
 import com.cenfotec.adaka.app.service.impl.DeviceServiceImpl;
-import com.cenfotec.adaka.app.util.mapper.DeviceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +17,10 @@ public class DeviceController {
 
         @Autowired
         private DeviceServiceImpl deviceService;
-        @Autowired
-        private DeviceUtil dju;
+
 
     /**
-     * Returns all the devices asociated with one Admin user
+     * Returns all the devices associated with one Admin user
      * @param Id
      * @return
      */
