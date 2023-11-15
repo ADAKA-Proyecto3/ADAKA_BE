@@ -9,8 +9,8 @@ package com.cenfotec.adaka.app.domain;
  * */
 public enum Role {
     ROLE_ADMIN,
-    NURSE,
-    MEDICAL_DOCTOR,
-    IT_SPECIALIST,
-    OTHER
+    ROLE_NURSE,
+    ROLE_MEDICAL_DOCTOR,
+    ROLE_IT_SPECIALIST,
+    ROLE_OTHER
 }
