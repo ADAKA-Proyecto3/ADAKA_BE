@@ -6,11 +6,9 @@ import com.cenfotec.adaka.app.repository.DeviceRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,7 +29,7 @@ public class DeviceServiceImpl implements DeviceService {
     public List<Device> getAllDevices(int adminId) {
 
         User u = userRepository.findById(adminId).get();
-        if(u!=null && u.getRole().equals(Role.ADMIN)){
+        if(u!=null && u.getRole().equals(Role.ROLE_ADMIN)){
             return  deviceRepository.findAllByUser(u);
         }else  throw new UserNotFoundException("No hay administradores con ese ID registrados en la BD");
 
@@ -46,7 +44,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Device saveDevice(Device device, int admin) {
         User user  = userService.getUserById(admin);
-       if( user!=null && user.getRole().equals(Role.ADMIN)){
+       if( user!=null && user.getRole().equals(Role.ROLE_ADMIN)){
            device.setUser(user);
            device.setInstallation(LocalDateTime.now());
            return deviceRepository.save(device);
