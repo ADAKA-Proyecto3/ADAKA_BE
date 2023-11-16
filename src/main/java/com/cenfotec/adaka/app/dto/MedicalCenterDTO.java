@@ -28,12 +28,17 @@ public class MedicalCenterDTO {
      */
     String status;
 
+    /**
+     *Medical center air value AQI
+     */
+    String value;
 
-    public MedicalCenterDTO(String name, String direction, String latitude, String longitude, String status) {
+    public MedicalCenterDTO(String name, String direction, String latitude, String longitude, String status, String value) {
         this.name = name;
         this.direction = direction;
         this.latitude = latitude;
         this.longitude = longitude;
         this.status = status;
+        this.value = value;
     }
 }
