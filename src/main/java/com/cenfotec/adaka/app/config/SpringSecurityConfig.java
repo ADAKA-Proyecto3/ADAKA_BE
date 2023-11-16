@@ -41,6 +41,7 @@ public class SpringSecurityConfig {
     AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+    //"/add/device/{roomId}/{deviceId}"
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -50,11 +51,13 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "NURSE","MEDICAL_DOCTOR")
                 .antMatchers(HttpMethod.POST, "/users/{id}/{id}").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST    , "/users/password/{id}").permitAll()
 
-                .antMatchers(HttpMethod.POST, "/device").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/devices").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "room/add/device/{roomId}/{deviceId}").hasRole("ADMIN")
+
+                .antMatchers(HttpMethod.POST, "/devices").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/devices/{id}").hasAnyRole("ADMIN","NURSE","MEDICAL_DOCTOR")
-                .antMatchers(HttpMethod.DELETE, "/devices/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/devices/delete/{id}").hasRole("ADMIN")
 
                 .antMatchers(HttpMethod.POST, "/medical").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/medical/{id}").hasRole("ADMIN")
@@ -63,6 +66,7 @@ public class SpringSecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/medical/{id}").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/medical/room/{id}").hasAnyRole("ADMIN","NURSE","MEDICAL_DOCTOR")
                 .antMatchers(HttpMethod.GET, "/medical/room/").hasAnyRole("ADMIN","NURSE","MEDICAL_DOCTOR")
+                .antMatchers(HttpMethod.GET, "/medical/all").permitAll()
 
 
                 .antMatchers(HttpMethod.POST, "/subscription/**").permitAll()

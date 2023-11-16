@@ -8,9 +8,9 @@ package com.cenfotec.adaka.app.domain;
  * @CreatedDate: October 5th, 2023
  * */
 public enum Role {
-    ADMIN,
-    NURSE,
-    MEDICAL_DOCTOR,
-    IT_SPECIALIST,
-    OTHER
+    ROLE_ADMIN,
+    ROLE_NURSE,
+    ROLE_MEDICAL_DOCTOR,
+    ROLE_IT_SPECIALIST,
+    ROLE_OTHER
 }

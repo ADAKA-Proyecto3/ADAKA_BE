@@ -1,7 +1,7 @@
 package com.cenfotec.adaka.app.service;
 
 import com.cenfotec.adaka.app.domain.MedicalCenter;
-import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.dto.MedicalCenterDTO;
 
 import java.util.List;
 
@@ -13,4 +13,6 @@ public interface MedicalCenterService {
     MedicalCenter updateMedicalCenter(int id, MedicalCenter medicalCenter);
     MedicalCenter updateMedicalStatus(int id, String status);
     void deleteMedicalCenter(int id);
+    List<MedicalCenterDTO> getAllMedicalCenters();
+
 }
