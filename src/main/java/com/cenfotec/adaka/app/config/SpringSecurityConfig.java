@@ -96,6 +96,8 @@ public class SpringSecurityConfig {
                                 .antMatchers(HttpMethod.GET,"/devices/{id}").hasAnyRole("ADMIN","NURSE", "MEDICAL_DOCTOR")
                                 .antMatchers(HttpMethod.POST,"/devices/{adminId}/save").hasRole("ADMIN")
                                 .antMatchers(HttpMethod.DELETE, "/devices/delete/{id}").hasRole("ADMIN")
+                        //METRICS
+                                .antMatchers("/metrics/**").permitAll()
 
                                 .anyRequest().authenticated()
                                 .and()
