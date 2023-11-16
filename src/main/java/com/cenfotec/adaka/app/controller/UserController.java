@@ -73,6 +73,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PutMapping(value = "/{id}/updateUser", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
         log.debug("update User method  started");

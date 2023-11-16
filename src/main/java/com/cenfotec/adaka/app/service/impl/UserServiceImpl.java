@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User saveAdmin(User user, Subscription subscription) {
-        user.setRole(Role.ADMIN);
+        user.setRole(Role.ROLE_ADMIN);
         user.setStatus(Status.ACTIVE);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Subscription sb = subscriptionRepository.save(subscription);
