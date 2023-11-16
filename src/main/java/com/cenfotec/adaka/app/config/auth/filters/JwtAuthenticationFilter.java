@@ -1,5 +1,6 @@
 package com.cenfotec.adaka.app.config.auth.filters;
 import com.cenfotec.adaka.app.config.TokenJwtConfig;
+import com.cenfotec.adaka.app.domain.Role;
 import com.cenfotec.adaka.app.domain.User;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -65,7 +66,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
-        boolean isAdmin = roles.stream().anyMatch(role -> role.getAuthority().equals("ADMIN"));
+        boolean isAdmin = roles.stream().anyMatch(role -> role.getAuthority().equals(Role.ROLE_ADMIN.toString()));
 
         Claims claims = Jwts.claims();
         claims.put("authorities", new ObjectMapper().writeValueAsString(roles));
