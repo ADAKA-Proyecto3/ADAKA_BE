@@ -67,7 +67,8 @@ public class RoomImpl implements RoomService {
 
         // Asociar la sala al centro médico
         associateRoomWithMedicalCenter(medicalCenter, newRoom);
-
+        newRoom.setMedicalCenterId(id);
+   
         return newRoom;
     }
 
