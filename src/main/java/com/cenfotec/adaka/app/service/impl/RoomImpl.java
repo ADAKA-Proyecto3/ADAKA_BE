@@ -1,9 +1,6 @@
 package com.cenfotec.adaka.app.service.impl;
 
-import com.cenfotec.adaka.app.domain.Device;
-import com.cenfotec.adaka.app.domain.MedicalCenter;
-import com.cenfotec.adaka.app.domain.Room;
-import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.domain.*;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.exception.InvalidRoomException;
 import com.cenfotec.adaka.app.repository.RoomRepository;
@@ -70,7 +67,8 @@ public class RoomImpl implements RoomService {
 
         // Asociar la sala al centro médico
         associateRoomWithMedicalCenter(medicalCenter, newRoom);
-
+        newRoom.setMedicalCenterId(id);
+   
         return newRoom;
     }
 
@@ -115,7 +113,7 @@ public class RoomImpl implements RoomService {
         List<Map<String, Object>> results = roomRepository.findAllRoomsByUserId(id);
         User user = userService.getUserById(id);
 
-        if (user.getRole().name().equals("ADMIN")) {
+        if (user.getRole().name().equals(Role.ROLE_ADMIN.toString())) {
             for (Map<String, Object> result : results) {
                 Room room = (Room) result.get("room");
                 Integer medicalCenterId = (Integer) result.get("medicalCenterId");
