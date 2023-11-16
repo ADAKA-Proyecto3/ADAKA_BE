@@ -73,6 +73,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         claims.put("isAdmin", isAdmin);
         claims.put("username", username);
 
+
+
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)

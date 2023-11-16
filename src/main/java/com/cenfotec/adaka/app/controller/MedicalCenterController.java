@@ -86,7 +86,7 @@ public class MedicalCenterController {
         }
     }
 
-    @PutMapping(value = "changeMedical/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/changeMedical/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<?>> updateMedicalCenter(@PathVariable int id, @RequestBody MedicalCenter medicalCenter) {
         log.debug("update MedicalCenter method started");
 

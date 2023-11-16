@@ -115,6 +115,7 @@ public class RoomController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Response<?>> deleteMedicalCenter(@PathVariable int id) {
         log.debug("delete status MedicalCenter method  started");
