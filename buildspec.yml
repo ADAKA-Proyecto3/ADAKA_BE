@@ -3,11 +3,11 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto17 # You can change this to your preferred Java version
+      java: corretto17 # Using Java Corretto 17
     commands:
       - echo Installing Maven
-      - apt-get update -y
-      - apt-get install -y maven
+      - yum update -y        # Updated to use yum
+      - yum install -y maven # Updated to use yum
 
   pre_build:
     commands:
@@ -25,7 +25,7 @@ phases:
 
 artifacts:
   files:
-    - target/*.jar # Adjust this depending on your project structure and output
+    - target/*.jar # Specify the artifacts to be output
 
 cache:
   paths:
