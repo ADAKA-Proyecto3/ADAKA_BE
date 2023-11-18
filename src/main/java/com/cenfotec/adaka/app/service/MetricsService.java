@@ -7,12 +7,23 @@ import com.cenfotec.adaka.app.dto.SensorDataDTO;
 import com.cenfotec.adaka.app.exception.InvalidMetricException;
 import com.cenfotec.adaka.app.repository.MetricsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.time.format.DateTimeFormatter;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 
 @Service
 public class MetricsService {
@@ -32,7 +43,9 @@ public class MetricsService {
     private Measure convertToEntity(MetricDTO metricDTO) {
         Measure measure = new Measure();
         measure.setDeviceId(metricDTO.getDeviceId());
-        measure.setTimestamp(LocalDateTime.now());
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("America/Costa_Rica"));
+        LocalDateTime localDateTime = zonedDateTime.toLocalDateTime();
+        measure.setTimestamp(localDateTime);
 
         // Convertir SensorDataDTO a SensorData
         List<SensorData> sensorDataList = metricDTO.getSensorData().stream()
@@ -56,7 +69,8 @@ public class MetricsService {
 
     public List<MetricDTO> getMetricsByRoom(int roomId) {
         try {
-            List<Measure> measures = metricsRepository.findAllByRoomId(roomId);
+            Pageable topOne = PageRequest.of(0, 1);
+            List<Measure> measures = metricsRepository.findTopByRoomIdOrderByDateDesc(roomId, topOne);
             return measures.stream()
                     .map(this::convertToDTO)
                     .collect(Collectors.toList());
@@ -68,7 +82,7 @@ public class MetricsService {
     private MetricDTO convertToDTO(Measure measure) {
         MetricDTO metricDTO = new MetricDTO();
         metricDTO.setDeviceId(measure.getDeviceId());
-        // Asumiendo que tienes un campo para el roomId en Measure o relacionado
+
         // metricDTO.setRoomId(measure.getRoom().getId());
 
         List<SensorDataDTO> sensorDataDTOs = measure.getSensorData().stream()
@@ -87,10 +101,38 @@ public class MetricsService {
         return sensorDataDTO;
     }
 
-    public List<MetricDTO> getMetricsByRoomAndDates(int roomId, LocalDate startDate, LocalDate endDate) {
-        // Lógica para obtener métricas por habitación y rango de fechas
-        // Convierte las entidades a MetricDTO y retórnalas
-        // Lanza InvalidMetricException si hay un error
-        return null;
+
+    public Map<String, List<Object>> getMetricsByRoomAndDates(int roomId, LocalDate startDate, LocalDate endDate) {
+        try {
+            List<Measure> measures = metricsRepository.findAllByRoomIdAndDateRange(roomId, startDate, endDate);
+
+            Map<String, List<Object>> results = new LinkedHashMap<>();
+            Map<String, Double[]> sensorValues = new HashMap<>();
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+            measures.stream()
+                    .sorted(Comparator.comparing(Measure::getTimestamp))
+                    .forEach(measure -> {
+                        String dateKey = measure.getTimestamp().format(DateTimeFormatter.ofPattern("MM-dd HH:mm:ss"));
+                        results.putIfAbsent("dates", new ArrayList<>());
+                        if (!results.get("dates").contains(dateKey)) {
+                            results.get("dates").add(dateKey);
+                        }
+
+                        for (SensorData data : measure.getSensorData()) {
+                            sensorValues.putIfAbsent(data.getSensorName(), new Double[measures.size()]);
+                            Double[] values = sensorValues.get(data.getSensorName());
+                            int index = results.get("dates").indexOf(dateKey);
+                            double formattedValue = Double.parseDouble(decimalFormat.format(data.getValue()));
+                            values[index] = formattedValue;
+                        }
+                    });
+
+            sensorValues.forEach((key, value) -> results.put(key, Arrays.asList(value)));
+
+            return results;
+        } catch (Exception e) {
+            throw new InvalidMetricException("Error al obtener métricas por habitación y fechas: " + e.getMessage(), e);
+        }
     }
 }

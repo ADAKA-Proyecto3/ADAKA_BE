@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/metrics")
@@ -49,18 +51,27 @@ public class MetricsController {
         }
     }
 
+
     @GetMapping(value = "/room/{roomId}/dates", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<?>> getMetricsByRoomAndDates(
+    public ResponseEntity<Response<Map<String, List<Object>>>> getMetricsByRoomAndDates(
             @PathVariable int roomId,
-            @RequestParam("startDate") LocalDate startDate,
-            @RequestParam("endDate") LocalDate endDate) {
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         log.debug("getMetricsByRoomAndDates method started");
         try {
-            List<MetricDTO> metrics = metricsService.getMetricsByRoomAndDates(roomId, startDate, endDate);
-            return ResponseEntity.ok(new Response<>("Éxito", metrics));
+            Map<String, List<Object>> metrics = metricsService.getMetricsByRoomAndDates(roomId, startDate, endDate);
+            return ResponseEntity.ok(Response.<Map<String, List<Object>>>builder()
+                    .title("Éxito")
+                    .data(List.of(metrics))
+                    .build());
         } catch (InvalidMetricException ex) {
             log.error("Error al obtener métricas por habitación y fechas: " + ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>("Error, " + ex.getMessage(), null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.<Map<String, List<Object>>>builder()
+                            .title("Error")
+                            .data(null)
+                            .build());
         }
     }
+
 }
