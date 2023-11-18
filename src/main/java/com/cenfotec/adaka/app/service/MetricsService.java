@@ -47,7 +47,7 @@ public class MetricsService {
     private Measure convertToEntity(MetricDTO metricDTO) {
         Measure measure = new Measure();
         measure.setDeviceId(metricDTO.getDeviceId());
-        measure.setRoom(roomRepository.getRoomById(metricDTO.getDeviceId()));
+        measure.setRoom(roomRepository.getRoomByDevice(metricDTO.getDeviceId()));
         ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("America/Costa_Rica"));
         LocalDateTime localDateTime = zonedDateTime.toLocalDateTime();
         measure.setTimestamp(localDateTime);
