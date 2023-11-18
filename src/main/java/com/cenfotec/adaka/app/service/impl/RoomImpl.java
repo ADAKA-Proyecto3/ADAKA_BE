@@ -96,9 +96,10 @@ public class RoomImpl implements RoomService {
 
     @Override
     public Room updateRoomDevice(int idRoom) {
-        Room room = roomRepository.findById(idRoom).orElseThrow(() -> new InvalidMedicalCenterException("no existe la sala: " + idRoom));
-        room.setDevice(null);
-        return roomRepository.save(room);
+            Room room = roomRepository.findById(idRoom).orElseThrow(() -> new InvalidMedicalCenterException("no existe la sala: " + idRoom));
+            room.setDevice(null);
+            room.setMedicalCenterId(room.getMedicalCenter().getId());
+            return roomRepository.save(room);
     }
 
     @Override
@@ -187,7 +188,7 @@ public class RoomImpl implements RoomService {
             throw new InvalidRoomException("Validation errors: Error Updating Rooms, device not found");
         }
         Room dbRoom = room.get();
-        if (dbRoom.getDevice() != null) {
+        if(dbRoom.getDevice()!=null){
             int idOld = dbRoom.getDevice().getId();
             if (idOld == deviceId) {
                 throw new InvalidRoomException("Validation errors: Error Updating Rooms, the room already have a device, only one device per room is allowed");
