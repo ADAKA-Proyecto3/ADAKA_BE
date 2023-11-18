@@ -4,7 +4,6 @@ import com.cenfotec.adaka.app.domain.*;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.exception.InvalidRoomException;
 import com.cenfotec.adaka.app.repository.RoomRepository;
-import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
 import com.cenfotec.adaka.app.service.RoomService;
 import com.cenfotec.adaka.app.service.UserService;
@@ -47,6 +46,16 @@ public class RoomImpl implements RoomService {
         }
     }
     // Listar salas con id usuario
+
+    @Override
+    public Room getRoomByDevice(int id) {
+        Optional<Room> optionalRoom = roomRepository.findByDevice(id);
+        if (optionalRoom.isPresent()) {
+            return optionalRoom.get();
+        } else {
+            throw new InvalidRoomException("The ID does not exist: " + id);
+        }
+    }
 
     @Override
     public Room saveRoom(Room room, int id) {

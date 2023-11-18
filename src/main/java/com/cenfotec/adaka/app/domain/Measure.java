@@ -27,8 +27,8 @@ public class Measure {
 
     private LocalDateTime timestamp;
 
-//    @ManyToOne
-//    @JoinColumn(name = "room_id")
-//    private Room room;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 
 }
