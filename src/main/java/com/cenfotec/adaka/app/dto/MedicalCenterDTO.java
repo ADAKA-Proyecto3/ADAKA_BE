@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class MedicalCenterDTO {
+    int id;
     /**
      *Medical center name
      */
@@ -33,12 +34,13 @@ public class MedicalCenterDTO {
      */
     String value;
 
-    public MedicalCenterDTO(String name, String direction, String latitude, String longitude, String status, String value) {
+    public MedicalCenterDTO(int id,String name, String direction, String latitude, String longitude, String status, String value) {
         this.name = name;
         this.direction = direction;
         this.latitude = latitude;
         this.longitude = longitude;
         this.status = status;
         this.value = value;
+        this.id = id;
     }
 }
