@@ -6,6 +6,7 @@ import com.cenfotec.adaka.app.dto.MetricDTO;
 import com.cenfotec.adaka.app.dto.SensorDataDTO;
 import com.cenfotec.adaka.app.exception.InvalidMetricException;
 import com.cenfotec.adaka.app.repository.MetricsRepository;
+import com.cenfotec.adaka.app.service.impl.RoomImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class MetricsService {
     @Autowired
     private MetricsRepository metricsRepository;
 
+    @Autowired
+    private RoomImpl roomRepository;
+
 
     public void addMetrics(MetricDTO metricDTO) {
         try {
@@ -43,6 +47,7 @@ public class MetricsService {
     private Measure convertToEntity(MetricDTO metricDTO) {
         Measure measure = new Measure();
         measure.setDeviceId(metricDTO.getDeviceId());
+        measure.setRoom(roomRepository.getRoomById(metricDTO.getDeviceId()));
         ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("America/Costa_Rica"));
         LocalDateTime localDateTime = zonedDateTime.toLocalDateTime();
         measure.setTimestamp(localDateTime);
@@ -104,7 +109,7 @@ public class MetricsService {
 
     public Map<String, List<Object>> getMetricsByRoomAndDates(int roomId, LocalDate startDate, LocalDate endDate) {
         try {
-            List<Measure> measures = metricsRepository.findAllByRoomIdAndDateRange(roomId, startDate, endDate);
+            List<Measure> measures = metricsRepository.findAllByRoomIdAndDateRange(roomId, startDate.atStartOfDay(), endDate.atTime(23, 59, 59));
 
             Map<String, List<Object>> results = new LinkedHashMap<>();
             Map<String, Double[]> sensorValues = new HashMap<>();
