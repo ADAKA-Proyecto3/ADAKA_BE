@@ -96,7 +96,7 @@ public class RoomImpl implements RoomService {
             long volume = newRoom.getLength() * newRoom.getWidth() * newRoom.getHeight();
             db_room.setVolume(volume);
             db_room.setMedicalCenter(medicalCenter.get());
-
+            db_room.setMedicalCenterId(medicalCenter.get().getId());
             return roomRepository.save(db_room);
         } else {
             throw new InvalidRoomException("Validation errors: Error Updating Rooms");
@@ -204,6 +204,7 @@ public class RoomImpl implements RoomService {
             }
         }
         dbRoom.setDevice(d);
+        dbRoom.setMedicalCenterId(dbRoom.getMedicalCenter().getId());
         return roomRepository.save(dbRoom);
     }
 

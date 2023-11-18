@@ -6,14 +6,19 @@ import com.cenfotec.adaka.app.dto.MetricDTO;
 import com.cenfotec.adaka.app.dto.SensorDataDTO;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
+import com.cenfotec.adaka.app.repository.MetricsRepository;
+import com.cenfotec.adaka.app.repository.RoomRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
 import com.cenfotec.adaka.app.service.MetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MedicalCenterImpl implements MedicalCenterService {
@@ -23,8 +28,10 @@ public class MedicalCenterImpl implements MedicalCenterService {
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
     @Autowired
     private UserRepository userRepository; // Create this repository interface
+
     @Autowired
-    private MetricsService metricsService;
+    private MetricsRepository metricsRepository; // Create this repository interface
+
 
     @Override
     public List<MedicalCenter> getAllMedicalCentersByUserId(int id) {
@@ -122,13 +129,15 @@ public class MedicalCenterImpl implements MedicalCenterService {
             boolean hasDevice = false;
 
             for (Room room : centroMedico.getRooms()) {
-                if (room.getDevice() != null) {
-                    hasDevice = true;
-                    Device device = room.getDevice();
-                    List<MetricDTO> data = metricsService.getMetricsByRoom(device.getDeviceId());
-                    List<SensorDataDTO> dataSensor = data.get(0).getSensorData();
+                Pageable topOne = PageRequest.of(0, 1);
+                List<Measure> measures = metricsRepository.findTopByRoomIdOrderByDateDesc(room.getId(), topOne);
 
-                    for (SensorDataDTO sensor : dataSensor) {
+                if (measures.size() != 0) {
+                    hasDevice = true;
+
+                    List<SensorData> dataSensor = measures.get(0).getSensorData();
+
+                    for (SensorData sensor : dataSensor) {
                         if (sensor.getSensorName().equals("PM2.5")) {
                             medialCenter.setValue(String.valueOf(sensor.getValue()));
                         }
