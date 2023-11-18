@@ -1,21 +1,19 @@
 package com.cenfotec.adaka.app.service.impl;
 
-import com.cenfotec.adaka.app.domain.MedicalCenter;
-import com.cenfotec.adaka.app.domain.Status;
-import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.domain.*;
 import com.cenfotec.adaka.app.dto.MedicalCenterDTO;
+import com.cenfotec.adaka.app.dto.MetricDTO;
+import com.cenfotec.adaka.app.dto.SensorDataDTO;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
-import com.cenfotec.adaka.app.service.UserService;
-import org.springframework.aop.target.LazyInitTargetSource;
+import com.cenfotec.adaka.app.service.MetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MedicalCenterImpl implements MedicalCenterService {
@@ -25,6 +23,8 @@ public class MedicalCenterImpl implements MedicalCenterService {
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
     @Autowired
     private UserRepository userRepository; // Create this repository interface
+    @Autowired
+    private MetricsService metricsService;
 
     @Override
     public List<MedicalCenter> getAllMedicalCentersByUserId(int id) {
@@ -110,12 +110,39 @@ public class MedicalCenterImpl implements MedicalCenterService {
 
     /**
      * Get all medical center info for map
-     * */
+     */
     @Override
     public List<MedicalCenterDTO> getAllMedicalCenters() {
-       List<MedicalCenterDTO> medicalCenterDTOList = medicalCenterRepository.findAllMedicalCenters();
-        //Falta llamar a los datos de cada centro medico y saber el estado
-       return medicalCenterDTOList;
+        List<MedicalCenterDTO> medicalCenterDTOList = medicalCenterRepository.findAllMedicalCenters();
+
+        List<MedicalCenterDTO> newMedicalCenterDTOList = new ArrayList<>();
+
+        for (MedicalCenterDTO medialCenter : medicalCenterDTOList) {
+            MedicalCenter centroMedico = getMedicalCenterById(medialCenter.getId());
+            boolean hasDevice = false;
+
+            for (Room room : centroMedico.getRooms()) {
+                if (room.getDevice() != null) {
+                    hasDevice = true;
+                    Device device = room.getDevice();
+                    List<MetricDTO> data = metricsService.getMetricsByRoom(device.getDeviceId());
+                    List<SensorDataDTO> dataSensor = data.get(0).getSensorData();
+
+                    for (SensorDataDTO sensor : dataSensor) {
+                        if (sensor.getSensorName().equals("PM2.5")) {
+                            medialCenter.setValue(String.valueOf(sensor.getValue()));
+                        }
+                    }
+                }
+            }
+
+            if (hasDevice) {
+                newMedicalCenterDTOList.add(medialCenter);
+            }
+        }
+
+
+        return newMedicalCenterDTOList;
     }
 
 
