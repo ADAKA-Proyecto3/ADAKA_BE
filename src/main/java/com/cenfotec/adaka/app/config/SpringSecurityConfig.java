@@ -77,8 +77,8 @@ public class SpringSecurityConfig {
                                 .antMatchers(HttpMethod.GET,"/medical/all/{id}").hasAnyRole("ADMIN","NURSE", "MEDICAL_DOCTOR")
                                 .antMatchers(HttpMethod.GET,"/medical/{id}").hasAnyRole("ADMIN","NURSE", "MEDICAL_DOCTOR")
                                 .antMatchers(HttpMethod.POST, "/medical/{id}").hasRole("ADMIN")
+                                .antMatchers(HttpMethod.PUT, "/medical/changeMedicalStatus/{id}/{status}").permitAll() //Revisar
                                 .antMatchers(HttpMethod.PUT, "/medical/changeMedical/{id}").hasRole("ADMIN")
-                                .antMatchers(HttpMethod.PUT, "/medical/changeMedicalStatus/{id}/{status}").hasRole("ADMIN")
                                 .antMatchers(HttpMethod.DELETE, "/medical/delete/{id}").hasRole("ADMIN")
 
 
@@ -90,6 +90,9 @@ public class SpringSecurityConfig {
                                 .antMatchers(HttpMethod.PUT,"/room/changeRoom/{roomId}/{medicalCenterId}").hasRole("ADMIN")
                                 .antMatchers(HttpMethod.DELETE, "/room/delete/{id}").hasRole("ADMIN")
                                 .antMatchers(HttpMethod.PUT,"/room/add/device/{roomId}/{deviceId}").permitAll()//ADMIN ONLY NOT WORKING
+                                .antMatchers(HttpMethod.PUT,"/room/changeRoomDevice/{roomId}").hasRole("ADMIN")
+
+
 
                         //DEVICE
                                 .antMatchers(HttpMethod.GET,"/devices/all/{id}").hasAnyRole("ADMIN","NURSE", "MEDICAL_DOCTOR")
