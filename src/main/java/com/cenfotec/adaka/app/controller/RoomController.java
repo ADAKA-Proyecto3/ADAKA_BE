@@ -116,6 +116,20 @@ public class RoomController {
         }
     }
 
+    @PutMapping(value = "/changeRoomDevice/{roomId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Room> updateRoom(@PathVariable int roomId) {
+        log.debug("update quit device room method started");
+
+        try {
+            Room updatedRoom =  roomService.updateRoomDevice(roomId);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
+        } catch (InvalidRoomException ex) {
+            // Manejo de la excepción específica InvalidMedicalCenterException
+            log.error("Error al actualizar la sala: " + ex.getMessage(), ex.getCause());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Response<?>> deleteMedicalCenter(@PathVariable int id) {
         log.debug("delete status MedicalCenter method  started");

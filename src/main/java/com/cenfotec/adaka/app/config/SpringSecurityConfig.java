@@ -90,6 +90,9 @@ public class SpringSecurityConfig {
                                 .antMatchers(HttpMethod.PUT,"/room/changeRoom/{roomId}/{medicalCenterId}").hasRole("ADMIN")
                                 .antMatchers(HttpMethod.DELETE, "/room/delete/{id}").hasRole("ADMIN")
                                 .antMatchers(HttpMethod.PUT,"/room/add/device/{roomId}/{deviceId}").permitAll()//ADMIN ONLY NOT WORKING
+                                .antMatchers(HttpMethod.PUT,"/room/changeRoomDevice/{roomId}").hasRole("ADMIN")
+
+
 
                         //DEVICE
                                 .antMatchers(HttpMethod.GET,"/devices/all/{id}").hasAnyRole("ADMIN","NURSE", "MEDICAL_DOCTOR")
