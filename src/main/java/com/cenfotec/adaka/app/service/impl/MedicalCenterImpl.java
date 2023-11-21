@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MedicalCenterImpl implements MedicalCenterService {
@@ -138,8 +137,10 @@ public class MedicalCenterImpl implements MedicalCenterService {
                     List<SensorData> dataSensor = measures.get(0).getSensorData();
 
                     for (SensorData sensor : dataSensor) {
-                        if (sensor.getSensorName().equals("PM2.5")) {
-                            medialCenter.setValue(String.valueOf(sensor.getValue()));
+                        if ("PM2.5".equals(sensor.getSensorName())) {
+                            double AQI = 1.5 * Math.log10(sensor.getValue()) + 50;
+                            medialCenter.setValue(String.valueOf(AQI));
+                            break;
                         }
                     }
                 }
