@@ -1,6 +1,7 @@
 package com.cenfotec.adaka.app.controller;
 
 import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.dto.EmailDto;
 import com.cenfotec.adaka.app.exception.UserNotFoundException;
 import com.cenfotec.adaka.app.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,17 +63,40 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody User user) {
+    public ResponseEntity<User> updateSubUser(@PathVariable int id, @RequestBody User user) {
         log.debug("update User method  started");
         User existingUser = userService.getUserById(id);
         if (existingUser != null) {
-            userService.updateUser(id, user);
-            return ResponseEntity.noContent().build();
+           User modUser = userService.updateSubUser(id, user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(modUser);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
+    @PutMapping(value = "/{id}/updateUser", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
+        log.debug("update User method  started");
+        User existingUser = userService.getUserById(id);
+        if (existingUser != null) {
+            User modUser = userService.updateUser(id, user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(modUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping(value = "/password/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updatePasswordUser(@PathVariable int id, @RequestBody User user) {
+        log.debug("update User method  started");
+        User existingUser = userService.getUserById(id);
+        if (existingUser != null) {
+            User modUser = userService.updatePasswordUser(id, user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(modUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id) {
@@ -85,12 +110,12 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping(value = "/recover", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> saveUser(@RequestBody String email) {
+    @PostMapping(value = "/recover",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> saveUser(@RequestBody EmailDto emailDto) {
         log.debug("saveUser method  started");
         try {
-            userService.resetUserPassword(email);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Se ha enviado un correo con las credenciales");
+            userService.resetUserPassword(emailDto.getEmail());
+            return ResponseEntity.status(HttpStatus.CREATED).body(emailDto);
         } catch (UserNotFoundException unfe) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(unfe.getMessage());
 

@@ -1,20 +1,23 @@
 package com.cenfotec.adaka.app.service.impl;
 
-import com.cenfotec.adaka.app.domain.MedicalCenter;
-import com.cenfotec.adaka.app.domain.Status;
-import com.cenfotec.adaka.app.domain.User;
+import com.cenfotec.adaka.app.domain.*;
+import com.cenfotec.adaka.app.dto.MedicalCenterDTO;
+import com.cenfotec.adaka.app.dto.MetricDTO;
+import com.cenfotec.adaka.app.dto.SensorDataDTO;
 import com.cenfotec.adaka.app.exception.InvalidMedicalCenterException;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
+import com.cenfotec.adaka.app.repository.MetricsRepository;
+import com.cenfotec.adaka.app.repository.RoomRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
 import com.cenfotec.adaka.app.service.MedicalCenterService;
-import com.cenfotec.adaka.app.service.UserService;
-import org.springframework.aop.target.LazyInitTargetSource;
+import com.cenfotec.adaka.app.service.MetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MedicalCenterImpl implements MedicalCenterService {
@@ -24,6 +27,10 @@ public class MedicalCenterImpl implements MedicalCenterService {
     private MedicalCenterRepository medicalCenterRepository; // Create this repository interface
     @Autowired
     private UserRepository userRepository; // Create this repository interface
+
+    @Autowired
+    private MetricsRepository metricsRepository; // Create this repository interface
+
 
     @Override
     public List<MedicalCenter> getAllMedicalCentersByUserId(int id) {
@@ -35,25 +42,25 @@ public class MedicalCenterImpl implements MedicalCenterService {
     @Override
     public MedicalCenter getMedicalCenterById(int id) {
 
-        MedicalCenter medicalCenter = medicalCenterRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("No existe el centro médico: " + id));
+        MedicalCenter medicalCenter = medicalCenterRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("no existe el centro médico: " + id));
         return medicalCenter;
     }
 
     @Override
     public MedicalCenter saveMedicalCenter(MedicalCenter medicalCenter, int id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("Usuario no encontrado"));
+        User user = userRepository.findById(id).orElseThrow(() -> new InvalidMedicalCenterException("usuario no encontrado"));
 
         if (medicalCenterRepository.existsMedicalCenterByNameAndUserId(medicalCenter.getName(), id)) {
-            throw new InvalidMedicalCenterException("Validación: ya existe un centro médico registrado con ese nombre");
+            throw new InvalidMedicalCenterException("validación: ya existe un centro médico registrado con ese nombre");
         }
         // Realizar validación detallada
         List<String> validationErrors = validateMedicalCenter(medicalCenter, false);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidMedicalCenterException("Validación, campos vacios: " + String.join(", ", validationErrors));
+            throw new InvalidMedicalCenterException("validación, campos vacios: " + String.join(", ", validationErrors));
         }
         if (!validateUserMedicalCenter(user)) {
-            throw new InvalidMedicalCenterException("Máximo número de centros médicos registrados para el plan seleccionado");
+            throw new InvalidMedicalCenterException("máximo número de centros médicos registrados para el plan seleccionado");
         }
         // Guardar el centro médico en la base de datos
         MedicalCenter newMedicalCenter = medicalCenterRepository.save(medicalCenter);
@@ -70,7 +77,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
         List<String> validationErrors = validateMedicalCenter(newMedicalCenter, true);
 
         if (!validationErrors.isEmpty()) {
-            throw new InvalidMedicalCenterException("Validación, campos vacios: " + String.join(", ", validationErrors));
+            throw new InvalidMedicalCenterException("validación, campos vacios: " + String.join(", ", validationErrors));
         }
         //Get the old medical center and update the relational values
         MedicalCenter oldMedicalCenter = getMedicalCenterById(id);
@@ -89,7 +96,7 @@ public class MedicalCenterImpl implements MedicalCenterService {
             medicalCenter.setStatus(newStatus);
             return medicalCenterRepository.save(medicalCenter);
         } catch (Exception ex) {
-            throw new InvalidMedicalCenterException("Error al actualizar el estado del centro médico", ex);
+            throw new InvalidMedicalCenterException("actualizar el estado del centro médico", ex);
         }
     }
 
@@ -100,11 +107,52 @@ public class MedicalCenterImpl implements MedicalCenterService {
         boolean hasRooms = medicalCenterRepository.existsMedicalCenterByIdAndRoomsIsNotEmpty(id);
 
         if (hasRooms) {
-            throw new InvalidMedicalCenterException("Tiene salas asociadas al centro médico");
+            throw new InvalidMedicalCenterException("el centro médico tiene salas asociadas");
         } else {
             medicalCenterRepository.deleteById(id);
         }
 
+    }
+
+    /**
+     * Get all medical center info for map
+     */
+    @Override
+    public List<MedicalCenterDTO> getAllMedicalCenters() {
+        List<MedicalCenterDTO> medicalCenterDTOList = medicalCenterRepository.findAllMedicalCenters();
+
+        List<MedicalCenterDTO> newMedicalCenterDTOList = new ArrayList<>();
+
+        for (MedicalCenterDTO medialCenter : medicalCenterDTOList) {
+            MedicalCenter centroMedico = getMedicalCenterById(medialCenter.getId());
+            boolean hasDevice = false;
+
+            for (Room room : centroMedico.getRooms()) {
+                Pageable topOne = PageRequest.of(0, 1);
+                List<Measure> measures = metricsRepository.findTopByRoomIdOrderByDateDesc(room.getId(), topOne);
+
+                if (measures.size() != 0) {
+                    hasDevice = true;
+
+                    List<SensorData> dataSensor = measures.get(0).getSensorData();
+
+                    for (SensorData sensor : dataSensor) {
+                        if ("PM2.5".equals(sensor.getSensorName())) {
+                            double AQI = 1.5 * Math.log10(sensor.getValue()) + 50;
+                            medialCenter.setValue(String.valueOf(AQI));
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (hasDevice) {
+                newMedicalCenterDTOList.add(medialCenter);
+            }
+        }
+
+
+        return newMedicalCenterDTOList;
     }
 
 

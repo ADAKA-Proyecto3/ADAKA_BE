@@ -58,6 +58,11 @@ public class MedicalCenter {
     String email;
 
     /**
+     *Medical center public
+     */
+    int showPublic;
+
+    /**
      * Medical center status
      */
     @Enumerated(EnumType.STRING)

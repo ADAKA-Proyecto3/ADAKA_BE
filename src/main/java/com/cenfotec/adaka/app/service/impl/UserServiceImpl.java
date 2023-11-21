@@ -5,13 +5,11 @@ import com.cenfotec.adaka.app.exception.UserNotFoundException;
 import com.cenfotec.adaka.app.repository.MedicalCenterRepository;
 import com.cenfotec.adaka.app.repository.SubscriptionRepository;
 import com.cenfotec.adaka.app.repository.UserRepository;
-import com.cenfotec.adaka.app.service.EmailService;
 import com.cenfotec.adaka.app.service.UserService;
 import com.cenfotec.adaka.app.util.user.PasswordGeneratorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +44,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByEmail(String email) {
         Optional<User> userOptional = this.userRepository.getUserByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            if (!user.getRole().equals("ADMIN")) {
+                Optional<MedicalCenter> medicalCenterOptional = medicalCenterRepository.findById(user.getAssignedMedicalCenter());
+                if (medicalCenterOptional.isPresent()) {
+                    MedicalCenter medicalCenter = medicalCenterOptional.get();
+                    List<MedicalCenter> userMedicalCenters = user.getMedicalCenters();
+                    userMedicalCenters.add(medicalCenter);
+                    user.setMedicalCenters(userMedicalCenters);
+                }
+            }
+        }
+
         return userOptional.orElse(null);
     }
 
@@ -60,9 +73,13 @@ public class UserServiceImpl implements UserService {
             user.setManager(parentId);
             user.setAssignedMedicalCenter(medicalCenterId);
             user.setPassword(passwordEncoder.encode(password));
+            user.setStatus(Status.ACTIVE);
             temp = user;
-            if(userRepository.save(user)!=null){
+            User saved = userRepository.save(user);
+            if(saved!=null){
                 emailService.sendMessage(temp,password);
+                saved.setStatus(Status.FREEZE);
+                userRepository.save(saved);
             }
         }
 
@@ -71,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User resetUserPassword(String email) {
-        User temp = null;
+        User temp ;
         String password =generatePassword();
          temp = getUserByEmail(email);
          if(temp!=null){
@@ -94,9 +111,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User  updateUser(int id, User user) {
+        User oldUser = getUserById(id);
+        oldUser.setEmail(user.getEmail());
+        oldUser.setPhone(user.getPhone());
+        oldUser.setName(user.getName());
+        //user.setPassword(passwordEncoder.encode(user.getPassword()));
+       return userRepository.save(oldUser);
+    }
+
+    @Override
+    public User  updateSubUser(int id, User user) {
+
         user.setId(id);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-       return userRepository.save(user);
+
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User updatePasswordUser(int id, User user) {
+        User oldUser = getUserById(id);
+        oldUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        oldUser.setStatus(Status.ACTIVE);
+       return userRepository.save(oldUser);
     }
 
     @Override
@@ -114,7 +150,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User saveAdmin(User user, Subscription subscription) {
-        user.setRole(Role.ADMIN);
+        user.setRole(Role.ROLE_ADMIN);
         user.setStatus(Status.ACTIVE);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Subscription sb = subscriptionRepository.save(subscription);
