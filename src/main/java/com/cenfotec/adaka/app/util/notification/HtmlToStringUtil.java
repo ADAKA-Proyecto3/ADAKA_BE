@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class HtmlToStringUtil {
-    public final String subject = "Bienvenido a ZhenAir";
+    public final String subject = "Notificación ZhenAir";
 
     public String createEmailBodyForUser(User user,String password) {
         Status s =user.getStatus();
