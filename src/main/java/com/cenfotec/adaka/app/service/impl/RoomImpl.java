@@ -51,7 +51,9 @@ public class RoomImpl implements RoomService {
     public Room getRoomByDevice(int id) {
         Optional<Room> optionalRoom = roomRepository.findByDevice(id);
         if (optionalRoom.isPresent()) {
-            return optionalRoom.get();
+            Room room = optionalRoom.get();
+            int idr = room.getId();
+            return room;
         } else {
             throw new InvalidRoomException("The ID does not exist: " + id);
         }

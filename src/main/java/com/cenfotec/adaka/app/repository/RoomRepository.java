@@ -14,6 +14,6 @@ public interface RoomRepository extends CrudRepository<Room, Integer> {
     @Query("SELECT r AS room, mc.id AS medicalCenterId FROM Room r JOIN r.medicalCenter mc WHERE mc.user.id = ?1")
     List<Map<String, Object>> findAllRoomsByUserId(int userId);
 
-    @Query("SELECT r AS room FROM Room r WHERE r.device.deviceId = :deviceId")
+    @Query("SELECT r AS room FROM Room r WHERE r.device.id = :deviceId ")
     Optional<Room> findByDevice(@Param("deviceId") int deviceId);
 }
